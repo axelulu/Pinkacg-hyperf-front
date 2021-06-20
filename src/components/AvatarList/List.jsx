@@ -11,7 +11,7 @@ import { filterEmpty } from '@/components/_util/util'
  * excessItemsStyle: CSSProperties
  */
 const AvatarListProps = {
-  prefixCls: PropTypes.string.def('ant-pro-avatar-list'),
+  prefixCls: PropTypes.string.def('ant-pro-avatar-system'),
   size: {
     validator: val => {
       return typeof val === 'number' || ['small', 'large', 'default'].includes(val)

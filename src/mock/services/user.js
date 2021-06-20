@@ -418,7 +418,7 @@ const userNav = (options) => {
       'path': '/dashboard/analysis'
     },
 
-    // form
+    // site
     {
       'name': 'form',
       'parentId': 0,
@@ -427,7 +427,7 @@ const userNav = (options) => {
         'icon': 'form',
         'title': '表单页'
       },
-      'redirect': '/form/base-form',
+      'redirect': '/site/base-site',
       'component': 'PageView'
     },
     {
@@ -458,7 +458,7 @@ const userNav = (options) => {
       'component': 'AdvanceForm'
     },
 
-    // list
+    // system
     {
       'name': 'list',
       'parentId': 0,
@@ -468,14 +468,14 @@ const userNav = (options) => {
         'title': '列表页',
         'show': true
       },
-      'redirect': '/list/table-list',
+      'redirect': '/system/table-system',
       'component': 'PageView'
     },
     {
       'name': 'table-list',
       'parentId': 10010,
       'id': 10011,
-      'path': '/list/table-list/:pageNo([1-9]\\d*)?',
+      'path': '/system/table-system/:pageNo([1-9]\\d*)?',
       'meta': {
         'title': '查询表格',
         'show': true
@@ -510,7 +510,7 @@ const userNav = (options) => {
         'title': '搜索列表',
         'show': true
       },
-      'redirect': '/list/search/article',
+      'redirect': '/system/search/article',
       'component': 'SearchLayout'
     },
     {

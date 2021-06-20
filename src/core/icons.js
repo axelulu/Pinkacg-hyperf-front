@@ -1,5 +1,5 @@
 /**
- * Custom icon list
+ * Custom icon system
  * All icons are loaded here for easy management
  * @see https://vue.ant.design/components/icon/#Custom-Font-Icon
  *

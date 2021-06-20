@@ -11,16 +11,16 @@
 
 <script>
 const classes = [
-  'antd-pro-components-standard-form-row-index-standardFormRowBlock',
-  'antd-pro-components-standard-form-row-index-standardFormRowGrid',
-  'antd-pro-components-standard-form-row-index-standardFormRowLast'
+  'antd-pro-components-standard-site-row-index-standardFormRowBlock',
+  'antd-pro-components-standard-site-row-index-standardFormRowGrid',
+  'antd-pro-components-standard-site-row-index-standardFormRowLast'
 ]
 export default {
   name: 'StandardFormRow',
   props: {
     prefixCls: {
       type: String,
-      default: 'antd-pro-components-standard-form-row-index-standardFormRow'
+      default: 'antd-pro-components-standard-site-row-index-standardFormRow'
     },
     title: {
       type: String,

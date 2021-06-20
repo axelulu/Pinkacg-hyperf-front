@@ -45,7 +45,9 @@ import {
   Descriptions,
   Space,
   message,
-  notification
+  notification,
+  TreeSelect,
+  FormModel
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 
@@ -57,6 +59,7 @@ import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/core/permission/permission'
 import './directives/action'
 
+Vue.use(TreeSelect)
 Vue.use(ConfigProvider)
 Vue.use(Layout)
 Vue.use(Input)
@@ -68,6 +71,7 @@ Vue.use(Checkbox)
 Vue.use(Select)
 Vue.use(Card)
 Vue.use(Form)
+Vue.use(FormModel)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Modal)

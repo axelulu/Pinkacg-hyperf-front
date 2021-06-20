@@ -1,5 +1,16 @@
 <template>
   <div :class="prefixCls">
+    <div style="margin: 10px 0px">
+      <a-upload
+          action="/admin/upload/uploadPostImg"
+          list-type="picture"
+          :multiple="true"
+          @change="handleChange"
+          :data="{ 'id': postId }"
+      >
+        <a-button> <a-icon class="upload" type="upload" /> upload </a-button>
+      </a-upload>
+    </div>
     <quill-editor
       v-model="content"
       ref="myQuillEditor"
@@ -19,6 +30,81 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 import { quillEditor } from 'vue-quill-editor'
+// 工具栏配置
+const toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],
+  ['blockquote', 'code-block'],
+
+  [
+    {
+      'header': 1
+    },
+    {
+      'header': 2
+    }
+  ],
+  [
+    {
+      'list': 'ordered'
+    },
+    {
+      'list': 'bullet'
+    }
+  ],
+  [
+    {
+      'script': 'sub'
+    },
+    {
+      'script': 'super'
+    }
+  ],
+  [
+    {
+      'indent': '-1'
+    },
+    {
+      'indent': '+1'
+    }
+  ],
+  [
+    {
+      'direction': 'rtl'
+    }
+  ],
+
+  [
+    {
+      'size': ['small', false, 'large', 'huge']
+    }
+  ],
+  [
+    {
+      'header': [1, 2, 3, 4, 5, 6, false]
+    }
+  ],
+
+  [
+    {
+      'color': []
+    },
+    {
+      'background': []
+    }
+  ],
+  [
+    {
+      'font': []
+    }
+  ],
+  [
+    {
+      'align': []
+    }
+  ],
+  ['link', 'image', 'video'],
+  ['clean']
+]
 
 export default {
   name: 'QuillEditor',
@@ -30,32 +116,72 @@ export default {
       type: String,
       default: 'ant-editor-quill'
     },
-    // 表单校验用字段
-    // eslint-disable-next-line
     value: {
       type: String
+    },
+    postId: {
+      type: Number
     }
+  },
+  created () {
+    this.content = this.value
   },
   data () {
     return {
       content: null,
       editorOption: {
-        // some quill options
+        modules: {
+          toolbar: {
+            container: toolbarOptions,
+            handlers: {
+              'image': function (value) {
+                if (value) {
+                  document.querySelector('.upload').click()
+                } else {
+                  this.quill.format('image', false)
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
   methods: {
+    handleChange (info) {
+      if (info.file.status === 'uploading') {
+        this.upload_loading = true
+        return
+      }
+      const res = info.file.response
+      console.log(info)
+      if (info.file.status === 'done') {
+        // 获取富文本组件实例
+        const quill = this.$refs.myQuillEditor.quill
+        // 获取光标所在位置
+        if (quill.getSelection() === null) {
+          quill.focus()
+        }
+        const length = quill.getSelection().index
+        // 插入图片，res为服务器返回的图片链接地址
+        quill.insertEmbed(length, 'image', process.env.VUE_APP_API_ADMIN_URL + res.result.link)
+        // 调整光标到最后
+        quill.setSelection(length + 1)
+        if (res.code !== 200) {
+          this.$message.error(res.message)
+          return []
+        }
+        this.$message.info(res.message)
+        this.upload_loading = false
+      }
+    },
     onEditorBlur (quill) {
-      console.log('editor blur!', quill)
     },
     onEditorFocus (quill) {
-      console.log('editor focus!', quill)
     },
     onEditorReady (quill) {
-      console.log('editor ready!', quill)
     },
     onEditorChange ({ quill, html, text }) {
-      console.log('editor change!', quill, html, text)
       this.$emit('change', html)
     }
   },

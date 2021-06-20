@@ -3,8 +3,6 @@ export default {
     'menu.home': '主页',
     'menu.dashboard': '仪表盘',
     'menu.dashboard.analysis': '分析页',
-    'menu.dashboard.monitor': '监控页',
-    'menu.dashboard.workplace': '工作台',
     'menu.form': '表单页',
     'menu.form.basic-form': '基础表单',
     'menu.form.step-form': '分步表单',
@@ -35,5 +33,17 @@ export default {
     'menu.account.center': '个人中心',
     'menu.account.settings': '个人设置',
     'menu.account.trigger': '触发报错',
-    'menu.account.logout': '退出登录'
+    'menu.account.logout': '退出登录',
+    'menu.system': '系统管理',
+    'menu.system.permission': '权限管理',
+    'menu.system.role': '角色管理',
+    'menu.system.user': '用户管理',
+    'menu.system.menu': '菜单管理',
+    'menu.site': '网站管理',
+    'menu.site.meta': '网站信息',
+    'menu.content': '网站内容',
+    'menu.content.post': '网站文章',
+    'menu.content.category': '网站分类',
+    'menu.content.tag': '网站标签',
+    'menu.content.comment': '网站评论'
 }

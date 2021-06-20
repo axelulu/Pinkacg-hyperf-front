@@ -11,7 +11,7 @@ export const PERMISSION_ENUM = {
 }
 
 /**
- * <a-button v-if="$auth('form.edit')">Button</a-button>
+ * <a-button v-if="$auth('site.edit')">Button</a-button>
  * @param Vue
  */
 function plugin (Vue) {
