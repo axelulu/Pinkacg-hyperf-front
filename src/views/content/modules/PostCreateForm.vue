@@ -4,11 +4,16 @@
     :width="1000"
     :visible="visible"
     :confirmLoading="loading"
-    @ok="() => { $emit('ok') }"
+    @ok="handOk"
     @cancel="() => { $emit('cancel') }"
   >
     <a-spin :spinning="loading">
-      <a-form-model v-if="model" :form="form" v-bind="formLayout">
+      <a-form-model
+        ref='ruleForm'
+        :rules="rules"
+        v-if="model"
+        :model="model"
+        v-bind="formLayout">
         <!-- 检查是否有 id 并且大于0，大于0是修改。其他是新增，新增不显示主键ID -->
         <a-form-model-item
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
@@ -18,6 +23,7 @@
           <a-input v-model="model.id" disabled />
         </a-form-model-item>
         <a-form-model-item
+          prop='author'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章作者">
@@ -28,6 +34,7 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
+          prop='title'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章标题">
@@ -40,6 +47,7 @@
           <a-input v-model="model.title"/>
         </a-form-model-item>
         <a-form-model-item
+          prop='excerpt'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章摘要">
@@ -49,6 +57,7 @@
             v-model="model.excerpt"/>
         </a-form-model-item>
         <a-form-model-item
+          prop='content'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章内容">
@@ -58,6 +67,30 @@
             v-model="model.content"/>
         </a-form-model-item>
         <a-form-model-item
+          prop='header_img'
+          :labelCol="{lg: {span: 3}, sm: {span: 3}}"
+          :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
+          label="文章头图">
+          <a-upload
+            list-type="picture-card"
+            class="avatar-uploader"
+            :show-upload-list="false"
+            action="/admin/upload/uploadPostImg"
+            :data="{ 'id': model.id }"
+            :before-upload="beforeUpload"
+            @change="handleChange"
+          >
+            <img width='200px' v-if="model.header_img" :src="'http://localhost:9501/' + model.header_img" alt="avatar" />
+            <div v-else>
+              <a-icon :type="loading ? 'loading' : 'plus'" />
+              <div class="ant-upload-text">
+                Upload
+              </div>
+            </div>
+          </a-upload>
+        </a-form-model-item>
+        <a-form-model-item
+          prop='menu'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章菜单">
@@ -69,6 +102,7 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
+          prop='tag'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章标签">
@@ -82,6 +116,7 @@
           />
         </a-form-model-item>
         <a-form-model-item
+          prop='status'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章状态">
@@ -95,6 +130,7 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
+          prop='type'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章类型">
@@ -111,18 +147,21 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
+          prop='comment_status'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="评论状态">
           <a-switch v-model="model.comment_status" />
         </a-form-model-item>
         <a-form-model-item
+          prop='download_status'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="开启下载">
           <a-switch @change="downloadStatus" v-model="model.download_status" />
         </a-form-model-item>
         <a-form-model-item
+          prop='download_status'
           v-if="model && model.download_status"
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
@@ -150,12 +189,14 @@
           </div>
         </a-form-model-item>
         <a-form-model-item
+          prop='comment_count'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章评论数">
           <a-input-number v-model="model.comment_count"/>
         </a-form-model-item>
         <a-form-model-item
+          prop='views'
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章浏览量">
@@ -210,6 +251,22 @@ export default {
       }
     }
     return {
+      rules: {
+        views: [{ required: true, message: '请输入文章浏览量！' }],
+        comment_count: [{ required: true, message: '请输入评论数量！' }],
+        download: [{ required: true, message: '请输入下载内容！' }],
+        download_status: [{ required: true, message: '请输入下载状态！' }],
+        comment_status: [{ required: true, message: '请输入评论状态！' }],
+        type: [{ required: true, message: '请速入文章类型！' }],
+        status: [{ required: true, message: '请输入文章状态！' }],
+        tag: [{ required: true, message: '请输入标签！' }],
+        menu: [{ required: true, message: '请输入菜单！' }],
+        header_img: [{ required: true, message: '请输入文章头图！' }],
+        content: [{ required: true, message: '请输入文章内容！' }],
+        excerpt: [{ required: true, message: '请输入文章摘要！' }],
+        title: [{ required: true, message: '请输入文章标题！' }],
+        author: [{ required: true, message: '请输入文章作者！' }]
+      },
       postAuthor: {},
       postTag: {},
       postCategory: {},
@@ -233,6 +290,43 @@ export default {
     })
   },
   methods: {
+    handOk () {
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          this.$emit('ok')
+        } else {
+          this.$message.error('请输入完整数据！')
+          return false
+        }
+      })
+    },
+    handleChange (info) {
+      if (info.file.status === 'uploading') {
+        this.upload_loading = true
+        return
+      }
+      const res = info.file.response
+      if (info.file.status === 'done') {
+        this.model.header_img = res.result.link
+        if (res.code !== 200) {
+          this.$message.error(res.message)
+          return []
+        }
+        this.$message.info(res.message)
+        this.upload_loading = false
+      }
+    },
+    beforeUpload (file) {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+      if (!isJpgOrPng) {
+        this.$message.error('你只能上传jpep与png文件!')
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('图片大于2MB!')
+      }
+      return isJpgOrPng && isLt2M
+    },
     downloadStatus (e, item) {
       if (e === true) {
         this.model.download = [{
