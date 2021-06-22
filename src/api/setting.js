@@ -27,7 +27,7 @@ export function createSettingList (parameter) {
 
 export function updateSettingList (parameter) {
   return request({
-    url: api.settingUpdate + '/site_setting',
+    url: api.settingUpdate + '/' + parameter.name,
     method: 'put',
     data: parameter
   })

@@ -41,6 +41,8 @@ export default {
     'menu.system.menu': '菜单管理',
     'menu.site': '网站管理',
     'menu.site.meta': '网站信息',
+    'menu.site.cms': '网站cms',
+    'menu.site.footer': '网站footer',
     'menu.content': '网站内容',
     'menu.content.post': '网站文章',
     'menu.content.category': '网站分类',

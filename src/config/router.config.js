@@ -111,6 +111,18 @@ export const asyncRouterMap = [
             name: 'Meta',
             component: () => import('@/views/site/meta'),
             meta: { title: 'menu.site.meta', keepAlive: true, permission: [2] }
+          },
+          {
+            path: '/site/cms',
+            name: 'Cms',
+            component: () => import('@/views/site/cms'),
+            meta: { title: 'menu.site.cms', keepAlive: true, permission: [2] }
+          },
+          {
+            path: '/site/footer',
+            name: 'Footer',
+            component: () => import('@/views/site/footer'),
+            meta: { title: 'menu.site.footer', keepAlive: true, permission: [2] }
           }
         ]
       },
