@@ -82,7 +82,7 @@
           {{ text.id }}
         </span>
         <span slot="avatar" slot-scope="avatar">
-          <a-avatar size="large" shape="square" :src="'http://localhost:9501/' + avatar"/>
+          <a-avatar size="large" shape="square" :src="getImg(avatar)"/>
         </span>
         <span slot="check" slot-scope="text">
           <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
@@ -113,6 +113,7 @@
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getUserList, updateUserList, createUserList, deleteUserList } from '@/api/user'
+import { getImg } from '@/utils/util'
 
 import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/UserCreateForm'
@@ -221,7 +222,8 @@ export default {
           })
       },
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      getImg
     }
   },
   filters: {

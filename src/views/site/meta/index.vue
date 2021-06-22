@@ -29,7 +29,7 @@
             :before-upload="beforeUpload"
             @change="value => handleChange(value, 'logo')"
           >
-            <img style='height: 150px' prop='logo' v-if="site_setting.logo" :src="'http://localhost:9501/' + site_setting.logo" alt="avatar" />
+            <img style='height: 150px' prop='logo' v-if="site_setting.logo" :src="getImg(site_setting.logo)" alt="avatar" />
             <div v-else>
               <a-icon :type="upload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -51,7 +51,7 @@
             :before-upload="beforeUpload"
             @change="value => handleChange(value, 'header_img')"
           >
-            <img style='width: 600px' prop='header_img' v-if="site_setting.header_img" :src="'http://localhost:9501/' + site_setting.header_img" alt="avatar" />
+            <img style='width: 600px' prop='header_img' v-if="site_setting.header_img" :src="getImg(site_setting.header_img)" alt="avatar" />
             <div v-else>
               <a-icon :type="upload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -103,6 +103,7 @@
 
 <script>
 import { getSettingList, updateSettingList } from '@/api/setting'
+import { getImg } from '@/utils/util'
 
 export default {
   name: 'BaseForm',
@@ -116,7 +117,8 @@ export default {
         seo_keywords: [{ required: true, message: '请输入文章作者！' }]
       },
       'site_setting': {},
-      'upload_loading': false
+      'upload_loading': false,
+      getImg
     }
   },
   created () {

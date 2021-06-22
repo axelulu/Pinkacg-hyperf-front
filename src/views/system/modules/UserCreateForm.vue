@@ -30,7 +30,7 @@
             :before-upload="beforeUpload"
             @change="handleChange"
           >
-            <img v-if="model.avatar" :src="'http://localhost:9501/' + model.avatar" alt="avatar" />
+            <img v-if="model.avatar" :src="getImg(model.avatar)" alt="avatar" />
             <div v-else>
               <a-icon :type="upload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -129,6 +129,7 @@
 <script>
 import pick from 'lodash.pick'
 import { getRoleList } from '@/api/role'
+import { getImg } from '@/utils/util'
 
 // 表单字段
 const fields = ['id', 'avatar', 'name', 'desc', 'username', 'email', 'telephone', 'answertest', 'password', 'ip', 'user_role', 'check', 'updated_at']
@@ -177,7 +178,8 @@ export default {
       roleList: {},
       confirmDirty: false,
       upload_loading: false,
-      form: this.$form.createForm(this)
+      form: this.$form.createForm(this),
+      getImg
     }
   },
   created () {

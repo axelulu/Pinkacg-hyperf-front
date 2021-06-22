@@ -80,7 +80,7 @@
             :before-upload="beforeUpload"
             @change="handleChange"
           >
-            <img width='200px' v-if="model.header_img" :src="'http://localhost:9501/' + model.header_img" alt="avatar" />
+            <img width='200px' v-if="model.header_img" :src="getImg(model.header_img)" alt="avatar" />
             <div v-else>
               <a-icon :type="loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -213,6 +213,7 @@ import QuillEditor from '@/components/Editor/QuillEditor'
 import { getUserList } from '@/api/user'
 import { getTagList } from '@/api/tag'
 import { getCategoryList } from '@/api/category'
+import { getImg } from '@/utils/util'
 
 // 表单字段
 const fields = ['id', 'author', 'title', 'content', 'excerpt', 'type', 'status', 'comment_status', 'download_status', 'menu', 'tag', 'guid', 'comment_count', 'download', 'music', 'video', 'header_img', 'views', 'updated_at']
@@ -271,7 +272,8 @@ export default {
       postTag: {},
       postCategory: {},
       roleList: {},
-      form: this.$form.createForm(this)
+      form: this.$form.createForm(this),
+      getImg
     }
   },
   created () {
