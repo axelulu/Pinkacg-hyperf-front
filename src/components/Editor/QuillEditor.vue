@@ -164,7 +164,7 @@ export default {
         }
         const length = quill.getSelection().index
         // 插入图片，res为服务器返回的图片链接地址
-        quill.insertEmbed(length, 'image', process.env.VUE_APP_API_ADMIN_URL + res.result.link)
+        quill.insertEmbed(length, 'image', process.env.VUE_APP_API_BASE_SERVER_HOST + res.result.link)
         // 调整光标到最后
         quill.setSelection(length + 1)
         if (res.code !== 200) {
