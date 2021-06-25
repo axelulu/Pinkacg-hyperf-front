@@ -25,12 +25,29 @@
             list-type="picture-card"
             class="avatar-uploader"
             :show-upload-list="false"
-            :data="{ 'id': userId }"
-            action="/admin/upload/uploadAvatar"
+            :customRequest="value => getUploadAvatar(value, 'avatar')"
             :before-upload="beforeUpload"
-            @change="handleChange"
           >
-            <img v-if="model.avatar" :src="getImg(model.avatar)" alt="avatar" />
+            <img style='height: 150px' v-if="model.avatar" :src="getImg(model.avatar)" alt="avatar" />
+            <div v-else>
+              <a-icon :type="upload_loading ? 'loading' : 'plus'" />
+              <div class="ant-upload-text">
+                Upload
+              </div>
+            </div>
+          </a-upload>
+        </a-form-model-item>
+        <a-form-model-item
+          prop='background'
+          label="背景">
+          <a-upload
+            list-type="picture-card"
+            class="avatar-uploader"
+            :show-upload-list="false"
+            :customRequest="value => getUploadAvatar(value, 'background')"
+            :before-upload="beforeUpload"
+          >
+            <img style='height: 200px' v-if="model.background" :src="getImg(model.background)" alt="avatar" />
             <div v-else>
               <a-icon :type="upload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -130,9 +147,10 @@
 import pick from 'lodash.pick'
 import { getRoleList } from '@/api/role'
 import { getImg } from '@/utils/util'
+import { uploadAvatar } from '@/api/upload'
 
 // 表单字段
-const fields = ['id', 'avatar', 'name', 'desc', 'username', 'email', 'telephone', 'answertest', 'password', 'ip', 'user_role', 'check', 'updated_at']
+const fields = ['id', 'avatar', 'background', 'name', 'desc', 'username', 'email', 'telephone', 'answertest', 'password', 'ip', 'user_role', 'check', 'updated_at']
 
 export default {
   props: {
@@ -172,9 +190,9 @@ export default {
         desc: [{ required: true, message: '请输入描述！' }],
         username: [{ required: true, message: '请输入名称！' }],
         name: [{ required: true, message: '请输入昵称！' }],
-        avatar: [{ required: true, message: '请输入头像！' }]
+        avatar: [{ required: true, message: '请输入头像！' }],
+        background: [{ required: true, message: '请输入背景！' }]
       },
-      userId: null,
       roleList: {},
       confirmDirty: false,
       upload_loading: false,
@@ -189,11 +207,28 @@ export default {
 
     // 当 model 发生改变时，为表单设置值
     this.$watch('model', () => {
-      this.userId = this.model.id
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
   },
   methods: {
+    getUploadAvatar (info, value) {
+      const that = this
+      const formData = new FormData()
+      formData.append('file', info.file)
+      formData.append('id', this.model.id)
+      // 开始上传
+      this.upload_loading = true
+      uploadAvatar(formData).then((res) => {
+        if (res.code !== 200) {
+          that.$message.error(res.message)
+          that.upload_loading = false
+          return []
+        }
+        that.model[value] = res.result.link
+        that.$message.success(res.message)
+        that.upload_loading = false
+      })
+    },
     handOk () {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
@@ -214,22 +249,6 @@ export default {
         form.validateFields(['confirm'], { force: true })
       }
       callback()
-    },
-    handleChange (info) {
-      if (info.file.status === 'uploading') {
-        this.upload_loading = true
-        return
-      }
-      const res = info.file.response
-      if (info.file.status === 'done') {
-        this.model.avatar = res.result.link
-        if (res.code !== 200) {
-          this.$message.error(res.message)
-          return []
-        }
-        this.$message.info(res.message)
-        this.upload_loading = false
-      }
     },
     beforeUpload (file) {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'

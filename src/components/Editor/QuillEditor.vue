@@ -2,11 +2,9 @@
   <div :class="prefixCls">
     <div style="margin: 10px 0px">
       <a-upload
-          action="/admin/upload/uploadPostImg"
           list-type="picture"
           :multiple="true"
-          @change="handleChange"
-          :data="{ 'id': postId }"
+          :customRequest="getUploadPostImg"
       >
         <a-button> <a-icon class="upload" type="upload" /> upload </a-button>
       </a-upload>
@@ -30,6 +28,7 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 import { quillEditor } from 'vue-quill-editor'
+import { uploadPostImg } from '@/api/upload'
 // 工具栏配置
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
@@ -119,7 +118,7 @@ export default {
     value: {
       type: String
     },
-    postId: {
+    userId: {
       type: Number
     }
   },
@@ -148,14 +147,19 @@ export default {
     }
   },
   methods: {
-    handleChange (info) {
-      if (info.file.status === 'uploading') {
-        this.upload_loading = true
-        return
-      }
-      const res = info.file.response
-      console.log(info)
-      if (info.file.status === 'done') {
+    getUploadPostImg (info) {
+      const that = this
+      const formData = new FormData()
+      formData.append('file', info.file)
+      formData.append('id', this.userId)
+      // 开始上传
+      this.upload_loading = true
+      uploadPostImg(formData).then((res) => {
+        if (res.code !== 200) {
+          that.$message.error(res.message)
+          that.upload_loading = false
+          return []
+        }
         // 获取富文本组件实例
         const quill = this.$refs.myQuillEditor.quill
         // 获取光标所在位置
@@ -167,13 +171,9 @@ export default {
         quill.insertEmbed(length, 'image', process.env.VUE_APP_API_BASE_SERVER_HOST + res.result.link)
         // 调整光标到最后
         quill.setSelection(length + 1)
-        if (res.code !== 200) {
-          this.$message.error(res.message)
-          return []
-        }
-        this.$message.info(res.message)
-        this.upload_loading = false
-      }
+        that.$message.success(res.message)
+        that.upload_loading = false
+      })
     },
     onEditorBlur (quill) {
     },

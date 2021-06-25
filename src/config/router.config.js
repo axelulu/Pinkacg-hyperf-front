@@ -26,7 +26,7 @@ export const asyncRouterMap = [
           {
             path: '/dashboard/analysis/:pageNo([1-9]\\d*)?',
             name: 'Analysis',
-            component: () => import('@/views/dashboard/Analysis'),
+            component: () => import('@/views/dashboard/analysis'),
             meta: { title: 'menu.dashboard.analysis', keepAlive: false }
           }
         ]
@@ -36,7 +36,7 @@ export const asyncRouterMap = [
         path: '/system',
         redirect: '/system/manager',
         component: RouteView,
-        meta: { title: 'menu.system', icon: 'form', permission: [1] },
+        meta: { title: 'menu.system', icon: 'form', permission: [2, 3, 4, 26] },
         children: [
           {
             path: '/system/menu',
@@ -70,31 +70,31 @@ export const asyncRouterMap = [
         name: 'content',
         component: RouteView,
         redirect: '/content/post',
-        meta: { title: 'menu.content', icon: 'table', permission: [2] },
+        meta: { title: 'menu.content', icon: 'table', permission: [32, 31, 28, 30] },
         children: [
           {
             path: '/content/post',
             name: 'Post',
             component: () => import('@/views/content/post'),
-            meta: { title: 'menu.content.post', keepAlive: true, permission: [2] }
+            meta: { title: 'menu.content.post', keepAlive: true, permission: [28] }
           },
           {
             path: '/content/category',
             name: 'Category',
             component: () => import('@/views/content/category'),
-            meta: { title: 'menu.content.category', keepAlive: true, permission: [2] }
+            meta: { title: 'menu.content.category', keepAlive: true, permission: [30] }
           },
           {
             path: '/content/tag',
             name: 'Tag',
             component: () => import('@/views/content/tag'),
-            meta: { title: 'menu.content.tag', keepAlive: true, permission: [2] }
+            meta: { title: 'menu.content.tag', keepAlive: true, permission: [31] }
           },
           {
             path: '/content/comment',
             name: 'Comment',
             component: () => import('@/views/content/comment'),
-            meta: { title: 'menu.content.comment', keepAlive: true, permission: [2] }
+            meta: { title: 'menu.content.comment', keepAlive: true, permission: [32] }
           }
         ]
       },
@@ -104,25 +104,25 @@ export const asyncRouterMap = [
         name: 'site',
         component: RouteView,
         redirect: '/site/meta',
-        meta: { title: 'menu.site', icon: 'table', permission: [2] },
+        meta: { title: 'menu.site', icon: 'table', permission: [29] },
         children: [
           {
             path: '/site/meta',
             name: 'Meta',
             component: () => import('@/views/site/meta'),
-            meta: { title: 'menu.site.meta', keepAlive: true, permission: [2] }
+            meta: { title: 'menu.site.meta', keepAlive: true, permission: [29] }
           },
           {
             path: '/site/cms',
             name: 'Cms',
             component: () => import('@/views/site/cms'),
-            meta: { title: 'menu.site.cms', keepAlive: true, permission: [2] }
+            meta: { title: 'menu.site.cms', keepAlive: true, permission: [29] }
           },
           {
             path: '/site/footer',
             name: 'Footer',
             component: () => import('@/views/site/footer'),
-            meta: { title: 'menu.site.footer', keepAlive: true, permission: [2] }
+            meta: { title: 'menu.site.footer', keepAlive: true, permission: [29] }
           }
         ]
       },

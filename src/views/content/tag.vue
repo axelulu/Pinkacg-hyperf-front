@@ -87,17 +87,15 @@
         @cancel="handleCancel"
         @ok="handleOk"
       />
-      <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
 import moment from 'moment'
-import { STable, Ellipsis } from '@/components'
+import { STable } from '@/components'
 import { getTagList, updateTagList, createTagList, deleteTagList } from '@/api/tag'
 
-import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/TagCreateForm'
 
 const columns = [
@@ -148,9 +146,7 @@ export default {
   name: 'TableList',
   components: {
     STable,
-    Ellipsis,
-    CreateForm,
-    StepByStepModal
+    CreateForm
   },
   data () {
     this.columns = columns
@@ -202,7 +198,9 @@ export default {
   },
   methods: {
     handleAdd () {
-      this.mdl = null
+      this.mdl = {
+        'status': true
+      }
       this.visible = true
     },
     handleEdit (record) {
@@ -224,7 +222,7 @@ export default {
               // 刷新表格
               this.$refs.table.refresh()
 
-              this.$message.info('修改成功')
+              res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           } else {
             // 新增
@@ -236,7 +234,7 @@ export default {
               // 刷新表格
               this.$refs.table.refresh()
 
-              this.$message.info('新增成功')
+              res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           }
         } else {

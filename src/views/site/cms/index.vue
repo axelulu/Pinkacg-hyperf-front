@@ -79,7 +79,7 @@ export default {
     this.PostCategory()
     const that = this
     getSettingList({
-      'site': 'site_cms'
+      'name': 'site_cms'
     }).then(res => {
       console.log(res)
       if (res.code !== 200) {

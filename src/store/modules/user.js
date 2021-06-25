@@ -89,6 +89,7 @@ const user = {
         }).catch(() => {
           resolve()
         }).finally(() => {
+          storage.remove(ACCESS_TOKEN)
         })
       })
     }

@@ -3,7 +3,7 @@
   <page-header-wrapper>
     <a-card :body-style="{padding: '24px 32px'}" :bordered="false">
       <a-form-model
-        :model="site_setting"
+        :model="site_meta"
         :rules="rules"
         ref='cmsForm'>
         <a-form-model-item
@@ -12,7 +12,7 @@
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
           :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">
           <a-input
-            v-model='site_setting.web_name'
+            v-model='site_meta.web_name'
             name="web_name"
             placeholder="请输入网站标题！"/>
         </a-form-model-item>
@@ -24,12 +24,10 @@
             list-type="picture-card"
             class="avatar-uploader"
             :show-upload-list="false"
-            action="/admin/upload/uploadSiteMeta"
-            :data='{ "id": 1 }'
             :before-upload="beforeUpload"
-            @change="value => handleChange(value, 'logo')"
+            :customRequest="value => getUploadSiteMeta(value, 'logo')"
           >
-            <img style='height: 150px' prop='logo' v-if="site_setting.logo" :src="getImg(site_setting.logo)" alt="avatar" />
+            <img style='height: 150px' prop='logo' v-if="site_meta.logo" :src="getImg(site_meta.logo)" alt="avatar" />
             <div v-else>
               <a-icon :type="upload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -46,12 +44,10 @@
             list-type="picture-card"
             class="avatar-uploader"
             :show-upload-list="false"
-            action="/admin/upload/uploadSiteMeta"
-            :data='{ "id": 1 }'
             :before-upload="beforeUpload"
-            @change="value => handleChange(value, 'header_img')"
+            :customRequest="value => getUploadSiteMeta(value, 'header_img')"
           >
-            <img style='width: 600px' prop='header_img' v-if="site_setting.header_img" :src="getImg(site_setting.header_img)" alt="avatar" />
+            <img style='width: 600px' prop='header_img' v-if="site_meta.header_img" :src="getImg(site_meta.header_img)" alt="avatar" />
             <div v-else>
               <a-icon :type="upload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -67,7 +63,7 @@
           :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">
           <a-input
             placeholder="请输入网站名称！"
-            v-model='site_setting.seo_title'/>
+            v-model='site_meta.seo_title'/>
         </a-form-model-item>
         <a-form-model-item
           prop='seo_description'
@@ -77,7 +73,7 @@
           <a-textarea
             rows="4"
             placeholder="请输入网站描述！"
-            v-model='site_setting.seo_description'/>
+            v-model='site_meta.seo_description'/>
         </a-form-model-item>
         <a-form-model-item
           prop='seo_keywords'
@@ -87,7 +83,7 @@
           <a-textarea
             rows="4"
             placeholder="请输入网站关键词！"
-            v-model='site_setting.seo_keywords'/>
+            v-model='site_meta.seo_keywords'/>
         </a-form-model-item>
         <a-form-model-item
           :wrapperCol="{ span: 24 }"
@@ -104,6 +100,7 @@
 <script>
 import { getSettingList, updateSettingList } from '@/api/setting'
 import { getImg } from '@/utils/util'
+import { uploadSiteMeta } from '@/api/upload'
 
 export default {
   name: 'BaseForm',
@@ -116,7 +113,7 @@ export default {
         seo_description: [{ required: true, message: '请输入文章作者！' }],
         seo_keywords: [{ required: true, message: '请输入文章作者！' }]
       },
-      'site_setting': {},
+      'site_meta': {},
       'upload_loading': false,
       getImg
     }
@@ -128,30 +125,32 @@ export default {
     async getSetting () {
       const that = this
       await getSettingList({
-        'site': 'site_setting'
+        'name': 'site_meta'
       }).then(res => {
         if (res.code !== 200) {
           that.$message.error(res.message)
           return []
         }
-        this.site_setting = res.result.data[0].value
+        this.site_meta = res.result.data[0].value
       })
     },
-    handleChange (info, value) {
-      if (info.file.status === 'uploading') {
-        this.upload_loading = true
-        return
-      }
-      const res = info.file.response
-      if (info.file.status === 'done') {
-        this.site_setting[value] = res.result.link
+    getUploadSiteMeta (info, value) {
+      const that = this
+      const formData = new FormData()
+      formData.append('file', info.file)
+      formData.append('id', 0)
+      // 开始上传
+      this.upload_loading = true
+      uploadSiteMeta(formData).then((res) => {
         if (res.code !== 200) {
-          this.$message.error(res.message)
+          that.$message.error(res.message)
+          that.upload_loading = false
           return []
         }
-        this.$message.info(res.message)
-        this.upload_loading = false
-      }
+        that.site_meta[value] = res.result.link
+        that.$message.success(res.message)
+        that.upload_loading = false
+      })
     },
     beforeUpload (file) {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -169,8 +168,8 @@ export default {
       this.$refs.cmsForm.validate(valid => {
         if (valid) {
           const data = {
-            'name': 'site_setting',
-            'value': this.site_setting
+            'name': 'site_meta',
+            'value': this.site_meta
           }
           updateSettingList(data).then(res => {
             res.code === 200 ? that.$message.success(res.message) : that.$message.error(res.message)

@@ -10,48 +10,30 @@ const constantRouterComponents = {
   BlankLayout: BlankLayout,
   RouteView: RouteView,
   PageView: PageView,
-  // '403': () => import(/* webpackChunkName: "error" */ '@/views/exception/403'),
-  // '404': () => import(/* webpackChunkName: "error" */ '@/views/exception/404'),
-  // '500': () => import(/* webpackChunkName: "error" */ '@/views/exception/500'),
-  //
-  // // 你需要动态引入的页面组件
-  // 'Analysis': () => import('@/views/dashboard/Analysis'),
-  //
-  // // site
-  // 'BasicForm': () => import('@/views/site/meta'),
-  // 'StepForm': () => import('@/views/site/stepForm/StepForm'),
-  // 'AdvanceForm': () => import('@/views/site/advancedForm/AdvancedForm'),
-  //
-  // // system
-  // 'TableList': () => import('@/views/system/TableList'),
-  // 'StandardList': () => import('@/views/system/BasicList'),
-  // 'CardList': () => import('@/views/system/CardList'),
-  // 'SearchLayout': () => import('@/views/system/search/SearchLayout'),
-  // 'SearchArticles': () => import('@/views/system/search/Article'),
-  // 'SearchProjects': () => import('@/views/system/search/Projects'),
-  // 'SearchApplications': () => import('@/views/system/search/Applications'),
-  // 'ProfileBasic': () => import('@/views/profile/basic'),
-  // 'ProfileAdvanced': () => import('@/views/profile/advanced/Advanced'),
-  //
-  // // result
-  // 'ResultSuccess': () => import(/* webpackChunkName: "result" */ '@/views/result/Success'),
-  // 'ResultFail': () => import(/* webpackChunkName: "result" */ '@/views/result/Error'),
-  //
-  // // exception
-  // 'Exception403': () => import(/* webpackChunkName: "fail" */ '@/views/exception/403'),
-  // 'Exception404': () => import(/* webpackChunkName: "fail" */ '@/views/exception/404'),
-  // 'Exception500': () => import(/* webpackChunkName: "fail" */ '@/views/exception/500'),
-  //
-  // // account
-  // 'AccountCenter': () => import('@/views/account/center'),
-  // 'AccountSettings': () => import('@/views/account/settings/Index'),
-  // 'BaseSettings': () => import('@/views/account/settings/BaseSetting'),
-  // 'SecuritySettings': () => import('@/views/account/settings/Security'),
-  // 'CustomSettings': () => import('@/views/account/settings/Custom'),
-  // 'BindingSettings': () => import('@/views/account/settings/Binding'),
-  // 'NotificationSettings': () => import('@/views/account/settings/Notification')
+  '403': () => import(/* webpackChunkName: "error" */ '@/views/exception/403'),
+  '404': () => import(/* webpackChunkName: "error" */ '@/views/exception/404'),
+  '500': () => import(/* webpackChunkName: "error" */ '@/views/exception/500'),
 
-  // 'TestWork': () => import(/* webpackChunkName: "TestWork" */ '@/views/dashboard/TestWork')
+  // 你需要动态引入的页面组件
+  'Analysis': () => import('@/views/dashboard/analysis'),
+
+  // site
+  'Meta': () => import('@/views/site/meta'),
+  'Cms': () => import('@/views/site/cms'),
+  'Footer': () => import('@/views/site/footer'),
+
+  // system
+  'Menu': () => import('@/views/system/menu'),
+  'Permission': () => import('@/views/system/permission'),
+  'Role': () => import('@/views/system/role'),
+  'User': () => import('@/views/system/user'),
+
+  // content
+  'Tag': () => import('@/views/content/tag'),
+  'Post': () => import('@/views/content/post'),
+  'Comment': () => import('@/views/content/comment'),
+  'Category': () => import('@/views/content/category')
+
 }
 
 // 前端未找到页面路由（固定不用改）
@@ -80,7 +62,7 @@ const rootRouter = {
 export const generatorDynamicRouter = (token) => {
   return new Promise((resolve, reject) => {
     loginService.getCurrentUserNav(token).then(res => {
-      console.log('res', res)
+      // console.log('res', res)
       const { result } = res
       const menuNav = []
       const childrenNav = []
@@ -88,10 +70,10 @@ export const generatorDynamicRouter = (token) => {
       listToTree(result, childrenNav, 0)
       rootRouter.children = childrenNav
       menuNav.push(rootRouter)
-      console.log('menuNav', menuNav)
+      // console.log('menuNav', menuNav)
       const routers = generator(menuNav)
       routers.push(notFoundRouter)
-      console.log('routers', routers)
+      // console.log('routers', routers)
       resolve(routers)
     }).catch(err => {
       reject(err)
@@ -159,8 +141,10 @@ export const generator = (routerMap, parent) => {
  */
 const listToTree = (list, tree, parentId) => {
   list.forEach(item => {
+    // console.log(item)
     // 判断是否为父级菜单
     if (item.parentId === parentId) {
+      // console.log(item)
       const child = {
         ...item,
         key: item.key || item.name,

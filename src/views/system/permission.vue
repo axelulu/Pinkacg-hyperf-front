@@ -90,16 +90,14 @@
         @cancel="handleCancel"
         @ok="handleOk"
       />
-      <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
+import { STable } from '@/components'
 import { getPermissionList, createPermissionList, updatePermissionList, deletePermissionList } from '@/api/permission'
 
-import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/PermissionCreateForm'
 
 const columns = [
@@ -161,9 +159,7 @@ export default {
   name: 'TableList',
   components: {
     STable,
-    Ellipsis,
-    CreateForm,
-    StepByStepModal
+    CreateForm
   },
   data () {
     this.columns = columns
@@ -180,8 +176,7 @@ export default {
       loadData: parameter => {
         const that = this
         const requestParameters = Object.assign({}, parameter, this.queryParam)
-        requestParameters.p_id = 1
-        requestParameters.menu = 0
+        requestParameters.menu_slug = 1
         return getPermissionList(requestParameters)
           .then(res => {
             if (res.code !== 200) {
@@ -213,7 +208,10 @@ export default {
   },
   methods: {
     handleAdd () {
-      this.mdl = null
+      this.mdl = {
+        'status': true,
+        'is_menu': false
+      }
       this.visible = true
     },
     handleEdit (record) {
@@ -235,7 +233,7 @@ export default {
               // 刷新表格
               this.$refs.table.refresh()
 
-              this.$message.info('修改成功')
+              res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           } else {
             // 新增
@@ -247,7 +245,7 @@ export default {
               // 刷新表格
               this.$refs.table.refresh()
 
-              this.$message.info('新增成功')
+              res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           }
         } else {

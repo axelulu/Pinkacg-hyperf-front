@@ -57,8 +57,6 @@
         ref="table"
         :columns="columns"
         :data-source="topCategory"
-        @expand="loadSecondCategory"
-        :expandedRowKeys="curExpandedRowKeys"
         :rowKey="record=>record.id"
         class="components-table-demo-nested">
         <span slot="method" slot-scope="method">
@@ -67,27 +65,6 @@
         <span slot="status" slot-scope="status">
           <a-badge :status="status | statusTypeFilter" :text="status | statusFilter" />
         </span>
-        <a-table
-          slot="expandedRowRender"
-          :columns="columns"
-          :data-source="secondCategory"
-          :rowKey="record=>record.id"
-          :pagination="false"
-        >
-          <span slot="method" slot-scope="method">
-            <a-tag v-for="tag in method" :key="tag" color="blue">{{ tag }}</a-tag>
-          </span>
-          <span slot="status" slot-scope="status">
-            <a-badge :status="status | statusTypeFilter" :text="status | statusFilter" />
-          </span>
-          <span slot="action" slot-scope="text, record">
-            <template>
-              <a @click="handleEdit(record)">编辑</a>
-              <a-divider type="vertical" />
-              <a @click="handleSub(record)">删除</a>
-            </template>
-          </span>
-        </a-table>
         <span slot="action" slot-scope="text, record">
           <template>
             <a @click="handleEdit(record)">编辑</a>
@@ -105,17 +82,15 @@
         @cancel="handleCancel"
         @ok="handleOk"
       />
-      <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
 import moment from 'moment'
-import { STable, Ellipsis } from '@/components'
+import { STable } from '@/components'
 import { getCategoryList, createCategoryList, updateCategoryList, deleteCategoryList } from '@/api/category'
 
-import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/CategoryCreateForm'
 
 const columns = [
@@ -143,16 +118,12 @@ export default {
   name: 'TableList',
   components: {
     STable,
-    Ellipsis,
-    CreateForm,
-    StepByStepModal
+    CreateForm
   },
   data () {
     this.columns = columns
     return {
-      curExpandedRowKeys: [],
       topCategory: [],
-      secondCategory: [],
       // create model
       visible: false,
       confirmLoading: false,
@@ -200,20 +171,10 @@ export default {
           that.topCategory = res.result.data
         })
     },
-    async loadSecondCategory (e, item) {
-      const that = this
-      this.curExpandedRowKeys = []
-      this.curExpandedRowKeys.push(item.id)
-      await getCategoryList({
-        'son_slug': 1,
-        'son': item.id
-      })
-        .then(res => {
-          that.secondCategory = res.result.data
-        })
-    },
     handleAdd () {
-      this.mdl = null
+      this.mdl = {
+        'status': true
+      }
       this.visible = true
     },
     handleEdit (record) {
@@ -235,7 +196,7 @@ export default {
               // 刷新表格
               this.loadTopCategory()
 
-              this.$message.info('修改成功')
+              res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           } else {
             // 新增
@@ -247,7 +208,7 @@ export default {
               // 刷新表格
               this.loadTopCategory()
 
-              this.$message.info('新增成功')
+              res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           }
         } else {

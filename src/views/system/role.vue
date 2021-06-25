@@ -87,16 +87,14 @@
         @cancel="handleCancel"
         @ok="handleOk"
       />
-      <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
-import { STable, Ellipsis } from '@/components'
+import { STable } from '@/components'
 import { getRoleList, updateRoleList, createRoleList, deleteRoleList } from '@/api/role'
 
-import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/RoleCreateForm'
 
 const columns = [
@@ -147,9 +145,7 @@ export default {
   name: 'TableList',
   components: {
     STable,
-    Ellipsis,
-    CreateForm,
-    StepByStepModal
+    CreateForm
   },
   data () {
     this.columns = columns
@@ -166,7 +162,6 @@ export default {
       loadData: parameter => {
         const that = this
         const requestParameters = Object.assign({}, parameter, this.queryParam)
-        console.log('loadData request parameters:', requestParameters)
         return getRoleList(requestParameters)
           .then(res => {
             if (res.code !== 200) {
@@ -198,7 +193,9 @@ export default {
   },
   methods: {
     handleAdd () {
-      this.mdl = null
+      this.mdl = {
+        'status': true
+      }
       this.visible = true
     },
     handleEdit (record) {
@@ -221,7 +218,7 @@ export default {
               // 刷新表格
               this.$refs.table.refresh()
 
-              this.$message.info('修改成功')
+              res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           } else {
             // 新增
@@ -233,7 +230,7 @@ export default {
               // 刷新表格
               this.$refs.table.refresh()
 
-              this.$message.info('新增成功')
+              res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           }
         } else {

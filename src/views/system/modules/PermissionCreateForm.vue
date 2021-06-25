@@ -52,14 +52,21 @@
               <a-icon type="question-circle-o" />
             </a-tooltip>
           </span>
-          <a-input
+          <a-select
             v-decorator="[
-          'icon',
-          {
-            rules: [{ required: true, message: '请输入你的权限图标!', whitespace: true }],
-          },
-        ]"
-          />
+              'icon',
+              {
+                rules: [{ required: true, message: '请输入你的权限图标!', whitespace: true }],
+              },
+            ]"
+            placeholder="请选择图标"
+            style="width: 200px">
+            <a-select-option
+              v-for="i in seleiconlist"
+              :key="i.key"
+            ><a-icon :type="i.value"/>
+            </a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item label="权限路径">
           <span slot="label">
@@ -106,18 +113,27 @@
         ]"
           >
             <a-select-option value="GET">
-              GET
+              GET[查]
             </a-select-option>
             <a-select-option value="POST">
-              POST
+              POST[增]
             </a-select-option>
             <a-select-option value="PUT">
-              PUT
+              PUT[改]
             </a-select-option>
             <a-select-option value="DELETE">
-              DELETE
+              DELETE[删]
             </a-select-option>
           </a-select>
+        </a-form-item>
+        <a-form-item label="菜单排序">
+          <a-input-number
+            v-decorator="[
+          'sort',
+          {
+            rules: [{ required: true, message: '请输入菜单排序!' }],
+          },
+        ]" />
         </a-form-item>
         <a-form-item label="设为菜单">
           <a-switch v-decorator="['is_menu', { valuePropName: 'checked' }]" />
@@ -133,7 +149,7 @@
 <script>
 import pick from 'lodash.pick'
 // 表单字段
-const fields = ['id', 'method', 'name', 'icon', 'path', 'url', 'password', 'is_menu', 'title', 'status', 'updated_at']
+const fields = ['id', 'method', 'name', 'sort', 'icon', 'path', 'url', 'password', 'is_menu', 'title', 'status', 'updated_at']
 
 export default {
   props: {
@@ -162,6 +178,88 @@ export default {
       }
     }
     return {
+      seleiconlist: [
+        {
+          key: 'account-book',
+          value: 'account-book'
+        },
+        {
+          key: 'appstore',
+          value: 'appstore'
+        },
+        {
+          key: 'bank',
+          value: 'bank'
+        },
+        {
+          key: 'book',
+          value: 'book'
+        },
+        {
+          key: 'clock-circle',
+          value: 'clock-circle'
+        },
+        {
+          key: 'snippets',
+          value: 'snippets'
+        },
+        {
+          key: 'edit',
+          value: 'edit'
+        },
+        {
+          key: 'form',
+          value: 'form'
+        },
+        {
+          key: 'copy',
+          value: 'copy'
+        },
+        {
+          key: 'delete',
+          value: 'delete'
+        },
+        {
+          key: 'scissor',
+          value: 'scissor'
+        },
+        {
+          key: 'camera',
+          value: 'camera'
+        },
+        {
+          key: 'dashboard',
+          value: 'dashboard'
+        },
+        {
+          key: 'credit-card',
+          value: 'credit-card'
+        },
+        {
+          key: 'database',
+          value: 'database'
+        },
+        {
+          key: 'eye',
+          value: 'eye'
+        },
+        {
+          key: 'fire',
+          value: 'fire'
+        },
+        {
+          key: 'compass',
+          value: 'compass'
+        },
+        {
+          key: 'gift',
+          value: 'gift'
+        },
+        {
+          key: 'message',
+          value: 'message'
+        }
+      ],
       roleList: {},
       form: this.$form.createForm(this)
     }

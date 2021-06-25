@@ -15,7 +15,7 @@
         </a-form-item>
         <a-form-item label="父分类">
           <a-select v-decorator="['son', {rules: [{required: true, message: '请输入父分类！'}]}]" style="width: 200px">
-            <a-select-option v-if="(model && model.son === 0) || !model" :value="0">
+            <a-select-option v-if="(model && model.son === 0) || model" :value="0">
               顶级分类
             </a-select-option>
             <a-select-option v-if="(model && model.son !== 0) || !model" v-for="k in topCategory" :key="k.id" :value="k.id">

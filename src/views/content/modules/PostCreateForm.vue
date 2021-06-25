@@ -62,7 +62,7 @@
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章内容">
           <QuillEditor
-            :postId="model.id"
+            :postId="model.author"
             @change="changeContent"
             v-model="model.content"/>
         </a-form-model-item>
@@ -75,10 +75,8 @@
             list-type="picture-card"
             class="avatar-uploader"
             :show-upload-list="false"
-            action="/admin/upload/uploadPostImg"
-            :data="{ 'id': model.id }"
             :before-upload="beforeUpload"
-            @change="handleChange"
+            :customRequest="getUploadPostImg"
           >
             <img width='200px' v-if="model.header_img" :src="getImg(model.header_img)" alt="avatar" />
             <div v-else>
@@ -165,7 +163,7 @@
           v-if="model && model.download_status"
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
-          label="下载链接">
+          label="下载链接">{{model.download}}
           <a-form v-for="(k, v) in model.download" :key="v">
             <a-form-model-item style="margin-bottom: 6px">
               <a-input v-model="k.name" addon-before="链接名称" placeholder="请输入链接名称！" />
@@ -214,6 +212,7 @@ import { getUserList } from '@/api/user'
 import { getTagList } from '@/api/tag'
 import { getCategoryList } from '@/api/category'
 import { getImg } from '@/utils/util'
+import { uploadPostImg } from '@/api/upload'
 
 // 表单字段
 const fields = ['id', 'author', 'title', 'content', 'excerpt', 'type', 'status', 'comment_status', 'download_status', 'menu', 'tag', 'guid', 'comment_count', 'download', 'music', 'video', 'header_img', 'views', 'updated_at']
@@ -302,21 +301,23 @@ export default {
         }
       })
     },
-    handleChange (info) {
-      if (info.file.status === 'uploading') {
-        this.upload_loading = true
-        return
-      }
-      const res = info.file.response
-      if (info.file.status === 'done') {
-        this.model.header_img = res.result.link
+    getUploadPostImg (info) {
+      const that = this
+      const formData = new FormData()
+      formData.append('file', info.file)
+      formData.append('id', this.model.id)
+      // 开始上传
+      this.upload_loading = true
+      uploadPostImg(formData).then((res) => {
         if (res.code !== 200) {
-          this.$message.error(res.message)
+          that.$message.error(res.message)
+          that.upload_loading = false
           return []
         }
-        this.$message.info(res.message)
-        this.upload_loading = false
-      }
+        that.model.header_img = res.result.link
+        that.$message.success(res.message)
+        that.upload_loading = false
+      })
     },
     beforeUpload (file) {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -351,6 +352,7 @@ export default {
         'pwd2': '',
         'credit': ''
       })
+      console.log(this.model.download)
     },
     deleteDownload () {
       this.model.download.pop()

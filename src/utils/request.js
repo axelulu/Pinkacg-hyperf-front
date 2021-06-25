@@ -18,17 +18,18 @@ const errorHandler = (error) => {
     const data = error.response.data
     // 从 localstorage 获取 token
     const token = storage.get(ACCESS_TOKEN)
-    if (error.response.status === 403) {
+    if (error.response.code === 403) {
       notification.error({
         message: 'Forbidden',
         description: data.message
       })
     }
-    if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
+    if (data.code === 401 && !(data.result && data.result.isLogin)) {
       notification.error({
         message: 'Unauthorized',
         description: 'Authorization verification failed'
       })
+      console.log(token)
       if (token) {
         store.dispatch('Logout').then(() => {
           setTimeout(() => {

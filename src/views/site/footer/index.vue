@@ -93,7 +93,7 @@ export default {
     async getSetting () {
       const that = this
       await getSettingList({
-        'site': 'site_footer'
+        'name': 'site_footer'
       }).then(res => {
         if (res.code !== 200) {
           that.$message.error(res.message)
