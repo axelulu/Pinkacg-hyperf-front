@@ -176,7 +176,7 @@ export default {
       loadData: parameter => {
         const that = this
         const requestParameters = Object.assign({}, parameter, this.queryParam)
-        requestParameters.menu_slug = 1
+        requestParameters.is_menu = 0
         return getPermissionList(requestParameters)
           .then(res => {
             if (res.code !== 200) {

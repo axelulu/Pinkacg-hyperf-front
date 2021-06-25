@@ -243,6 +243,10 @@ export default {
       form.setFieldsValue(this.mdl)
       form.validateFields((errors, values) => {
         console.log(values)
+        values.tag = JSON.stringify(values.tag)
+        values.menu = JSON.stringify(values.menu)
+        values.download = JSON.stringify(values.download)
+        console.log(values)
         if (!errors) {
           if (values.id > 0) {
             // 修改 e.g.

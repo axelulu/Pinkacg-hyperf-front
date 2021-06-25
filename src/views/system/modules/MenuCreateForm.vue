@@ -285,7 +285,7 @@ export default {
   created () {
     getMenuList({
       'p_id': 0,
-      'p_id_slug': 1
+      'is_menu': 1
     }).then(res => {
       this.topMenu = res.result.data
     })

@@ -163,7 +163,7 @@
           v-if="model && model.download_status"
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
-          label="下载链接">{{model.download}}
+          label="下载链接">
           <a-form v-for="(k, v) in model.download" :key="v">
             <a-form-model-item style="margin-bottom: 6px">
               <a-input v-model="k.name" addon-before="链接名称" placeholder="请输入链接名称！" />

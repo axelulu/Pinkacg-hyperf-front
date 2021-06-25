@@ -125,7 +125,7 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {
-        'p_id_slug': 1,
+        'is_menu': 1,
         'p_id': 0
       },
       // 加载数据方法 必须为 Promise 对象

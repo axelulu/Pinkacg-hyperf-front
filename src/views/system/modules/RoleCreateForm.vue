@@ -114,9 +114,7 @@ export default {
   methods: {
     async rolePermission () {
       await getMenuList({
-        'p_id': 0,
-        'p_id_slug': 1,
-        'menu_slug': '<='
+        'p_id': 0
       })
         .then(res => {
           this.treeData = res.result.data
