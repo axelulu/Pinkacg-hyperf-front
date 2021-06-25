@@ -1,5 +1,8 @@
 # Pinkacg-hyperf-front
-安装教程：https://catacg.cn/90.html
+####安装教程：
+
+https://catacg.cn/90.html
+
 ##预览图：
 ![1](./img/1.png)
 ![1](./img/2.png)
