@@ -230,7 +230,19 @@ export default {
   },
   methods: {
     handleAdd () {
-      this.mdl = {}
+      this.mdl = {
+        'header_img': '',
+        'download': [
+          {
+            'name': '',
+            'link': '',
+            'pwd': '',
+            'pwd2': '',
+            'credit': ''
+          }
+        ],
+        'download_status': true
+      }
       this.visible = true
     },
     handleEdit (record) {

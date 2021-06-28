@@ -241,7 +241,9 @@ export default {
   methods: {
     handleAdd () {
       this.mdl = {
-        'check': true
+        'check': true,
+        'avatar': '',
+        'background': ''
       }
       this.visible = true
     },

@@ -30,7 +30,7 @@
           >
             <img style='height: 150px' v-if="model.avatar" :src="getImg(model.avatar)" alt="avatar" />
             <div v-else>
-              <a-icon :type="upload_loading ? 'loading' : 'plus'" />
+              <a-icon :type="avatarUpload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
                 Upload
               </div>
@@ -49,7 +49,7 @@
           >
             <img style='height: 200px' v-if="model.background" :src="getImg(model.background)" alt="avatar" />
             <div v-else>
-              <a-icon :type="upload_loading ? 'loading' : 'plus'" />
+              <a-icon :type="backgroundUpload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
                 Upload
               </div>
@@ -195,7 +195,8 @@ export default {
       },
       roleList: {},
       confirmDirty: false,
-      upload_loading: false,
+      avatarUpload_loading: false,
+      backgroundUpload_loading: false,
       form: this.$form.createForm(this),
       getImg
     }
@@ -217,16 +218,28 @@ export default {
       formData.append('file', info.file)
       formData.append('id', this.model.id)
       // 开始上传
-      this.upload_loading = true
+      if (value === 'avatar') {
+        this.avatarUpload_loading = true
+      } else if (value === 'background') {
+        this.backgroundUpload_loading = true
+      }
       uploadAvatar(formData).then((res) => {
         if (res.code !== 200) {
           that.$message.error(res.message)
-          that.upload_loading = false
+          if (value === 'avatar') {
+            this.avatarUpload_loading = false
+          } else if (value === 'background') {
+            this.backgroundUpload_loading = false
+          }
           return []
         }
         that.model[value] = res.result.link
         that.$message.success(res.message)
-        that.upload_loading = false
+        if (value === 'avatar') {
+          this.avatarUpload_loading = false
+        } else if (value === 'background') {
+          this.backgroundUpload_loading = false
+        }
       })
     },
     handOk () {
