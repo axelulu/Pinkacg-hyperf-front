@@ -13,15 +13,6 @@
         <a-form-item v-show="model && model.id > 0" label="主键ID">
           <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
         </a-form-item>
-        <a-form-item label="父分类">
-          <a-cascader
-            :options="topCategory"
-            v-decorator="['son', {rules: [{required: true, message: '请输入父分类！'}]}]"
-            :fieldNames="{ label: 'label', value: 'id', children: 'children' }"
-            change-on-select
-            placeholder="请输入："
-          />
-        </a-form-item>
         <a-form-item label="名称">
           <span slot="label">
             label
@@ -31,7 +22,7 @@
           </span>
           <a-input
             v-decorator="[
-          'label',
+          'name',
           {
             rules: [{ required: true, message: '请输入你的分类名称!', whitespace: true }],
           },
@@ -47,25 +38,9 @@
           </span>
           <a-input
             v-decorator="[
-          'value',
+          'slug',
           {
             rules: [{ required: true, message: '请输入分类标识!', whitespace: true }],
-          },
-        ]"
-          />
-        </a-form-item>
-        <a-form-item label="icon">
-          <span slot="value">
-            icon
-            <a-tooltip title="这里输入分类icon！">
-              <a-icon type="question-circle-o" />
-            </a-tooltip>
-          </span>
-          <a-input
-            v-decorator="[
-          'icon',
-          {
-            rules: [{ required: true, message: '请输入分类icon!', whitespace: true }],
           },
         ]"
           />
@@ -80,10 +55,10 @@
 
 <script>
 import pick from 'lodash.pick'
-import { getCategoryList } from '@/api/category'
+import { getAttachmentCatList } from '@/api/attachmentCat'
 
 // 表单字段
-const fields = ['id', 'label', 'value', 'son', 'status', 'icon', 'updated_at']
+const fields = ['id', 'name', 'slug', 'status', 'updated_at']
 export default {
   props: {
     visible: {
@@ -111,19 +86,19 @@ export default {
       }
     }
     return {
-      topCategory: {},
+      topAttachmentCat: {},
       form: this.$form.createForm(this)
     }
   },
   created () {
-    this.loadTopCategory()
+    this.loadTopAttachmentCat()
     // 防止表单未注册
     fields.forEach(v => this.form.getFieldDecorator(v))
 
     // 当 model 发生改变时，为表单设置值
     this.$watch('model', () => {
-      this.loadTopCategory()
-      this.model.son = this.getSonTree(this.topCategory, this.model.id)
+      this.loadTopAttachmentCat()
+      this.model.son = this.getSonTree(this.topAttachmentCat, this.model.id)
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
   },
@@ -147,18 +122,16 @@ export default {
       arrRes = rev(dataSource, id)
       return arrRes
     },
-    async loadTopCategory () {
+    async loadTopAttachmentCat () {
       const that = this
-      await getCategoryList({
-        son: 0
-      })
+      await getAttachmentCatList()
         .then(res => {
           if (res.code !== 200) {
             that.$message.error(res.message)
             return []
           }
-          that.topCategory = res.result.data
-          that.topCategory.unshift({
+          that.topAttachmentCat = res.result.data
+          that.topAttachmentCat.unshift({
             id: 0,
             label: '顶级分类',
             value: 'op',

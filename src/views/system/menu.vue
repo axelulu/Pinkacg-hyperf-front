@@ -51,6 +51,7 @@
         :columns="columns"
         :data-source="topMenu"
         :rowKey="record=>record.id"
+        :loading="loading"
         class="components-table-demo-nested">
         <span slot="method" slot-scope="method">
           <a-tag v-for="tag in method" :key="tag" color="blue">{{ tag }}</a-tag>
@@ -119,6 +120,7 @@ export default {
       topMenu: [],
       // create model
       visible: false,
+      loading: false,
       confirmLoading: false,
       mdl: null,
       // 高级搜索 展开/关闭
@@ -155,6 +157,7 @@ export default {
   methods: {
     async loadTopMenu () {
       const that = this
+      this.loading = true
       await getMenuList(this.queryParam)
         .then(res => {
           if (res.code !== 200) {
@@ -162,6 +165,7 @@ export default {
             return []
           }
           that.topMenu = res.result.data
+          this.loading = false
         })
     },
     handleAdd () {

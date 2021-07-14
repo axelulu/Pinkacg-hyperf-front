@@ -47,7 +47,8 @@ import {
   message,
   notification,
   TreeSelect,
-  FormModel
+  FormModel,
+  Cascader
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 
@@ -59,6 +60,7 @@ import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/core/permission/permission'
 import './directives/action'
 
+Vue.use(Cascader)
 Vue.use(TreeSelect)
 Vue.use(ConfigProvider)
 Vue.use(Layout)

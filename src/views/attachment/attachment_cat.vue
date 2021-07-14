@@ -21,13 +21,13 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="名称">
-                  <a-input v-model="queryParam.label" style="width: 100%"/>
+                  <a-input v-model="queryParam.name" style="width: 100%"/>
                 </a-form-item>
               </a-col>
             </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="loadTopCategory()">查询</a-button>
+                <a-button type="primary" @click="loadTopAttachmentCat()">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
                 <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? '收起' : '展开' }}
@@ -56,7 +56,7 @@
       <a-table
         ref="table"
         :columns="columns"
-        :data-source="topCategory"
+        :data-source="topAttachmentCat"
         :loading="loading"
         :rowKey="record=>record.id"
         class="components-table-demo-nested">
@@ -90,15 +90,14 @@
 <script>
 import moment from 'moment'
 import { STable } from '@/components'
-import { getCategoryList, createCategoryList, updateCategoryList, deleteCategoryList } from '@/api/category'
+import { getAttachmentCatList, createAttachmentCatList, updateAttachmentCatList, deleteAttachmentCatList } from '@/api/attachmentCat'
 
-import CreateForm from './modules/CategoryCreateForm'
+import CreateForm from './modules/AttachmentCatCreateForm'
 
 const columns = [
   { title: 'id', dataIndex: 'id', key: 'id', scopedSlots: { customRender: 'id' } },
-  { title: '标题', dataIndex: 'label', key: 'label' },
-  { title: '标记', dataIndex: 'value', key: 'value' },
-  { title: '图标', dataIndex: 'icon', key: 'icon' },
+  { title: '标题', dataIndex: 'name', key: 'label' },
+  { title: '标记', dataIndex: 'slug', key: 'value' },
   { title: '状态', dataIndex: 'status', key: 'status', scopedSlots: { customRender: 'status' } },
   { title: '更新时间', dataIndex: 'updated_at', key: 'updated_at' },
   { title: '操作', key: 'action', scopedSlots: { customRender: 'action' } }
@@ -124,7 +123,7 @@ export default {
   data () {
     this.columns = columns
     return {
-      topCategory: [],
+      topAttachmentCat: [],
       // create model
       visible: false,
       loading: false,
@@ -134,7 +133,6 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {
-        'son': 0
       },
       // 加载数据方法 必须为 Promise 对象
       selectedRowKeys: [],
@@ -158,19 +156,19 @@ export default {
     }
   },
   created () {
-    this.loadTopCategory()
+    this.loadTopAttachmentCat()
   },
   methods: {
-    async loadTopCategory () {
+    async loadTopAttachmentCat () {
       this.loading = true
       const that = this
-      await getCategoryList(this.queryParam)
+      await getAttachmentCatList(this.queryParam)
         .then(res => {
           if (res.code !== 200) {
             that.$message.error(res.message)
             return []
           }
-          that.topCategory = res.result.data
+          that.topAttachmentCat = res.result.data
           this.loading = false
         })
     },
@@ -190,29 +188,27 @@ export default {
       form.validateFields((errors, values) => {
         if (!errors) {
           console.log(values)
-          values.son = values.son[values.son.length - 1]
-          console.log(values)
           if (values.id > 0) {
             // 修改 e.g.
-            updateCategoryList(values).then(res => {
+            updateAttachmentCatList(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
               form.resetFields()
               // 刷新表格
-              this.loadTopCategory()
+              this.loadTopAttachmentCat()
 
               res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           } else {
             // 新增
-            createCategoryList(values).then(res => {
+            createAttachmentCatList(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
               form.resetFields()
               // 刷新表格
-              this.loadTopCategory()
+              this.loadTopAttachmentCat()
 
               res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
@@ -235,13 +231,13 @@ export default {
         title: '你确定要删除项目吗?',
         content: '如果你删除了此项目，将不可恢复！',
         onOk () {
-          deleteCategoryList(record).then(res => {
+          deleteAttachmentCatList(record).then(res => {
             that.visible = false
             that.confirmLoading = false
             // 重置表单数据
             form.resetFields()
             // 刷新表格
-            that.loadTopCategory()
+            that.loadTopAttachmentCat()
             res.code === 200 ? that.$message.success(res.message) : that.$message.error(res.message)
           })
         },
