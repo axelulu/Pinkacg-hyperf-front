@@ -11,22 +11,22 @@
           :labelCol="{lg: {span: 4}, sm: {span: 4}}"
           :wrapperCol="{lg: {span: 14}, sm: {span: 17} }">
           <a-form style='display: inline-block' v-for="(k, v) in cms" :key="v">
-            <a-form-model-item prop='cms' style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
-              <a-input v-model="k.name" addon-before="cms名称" placeholder="请输入cms名称！" />
+            <a-form-model-item style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
+              <a-input prop='name' v-model="k.name" addon-before="cms名称" placeholder="请输入cms名称！" />
             </a-form-model-item>
-            <a-form-model-item prop='cms' style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
-              <a-input v-model="k.icon" addon-before="图标" placeholder="请输入cms图标！" />
+            <a-form-model-item style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
+              <a-input prop='icon' v-model="k.icon" addon-before="图标" placeholder="请输入cms图标！" />
             </a-form-model-item>
-            <a-form-model-item prop='cms' style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
-              <a-select v-model="k.menu" style="width: 200px">
+            <a-form-model-item style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
+              <a-select prop='menu' v-model="k.menu" style="width: 200px">
                 <a-select-option v-for="k in postCategory" :key="k.id" :value="k.value">
                   <span v-if="k.son === 0">{{ k.label }}</span>
                   <span v-else>{{ k.label }}</span>
                 </a-select-option>
               </a-select>
             </a-form-model-item>
-            <a-form-model-item prop='cms' style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
-              <a-select v-model="k.style" style="width: 200px">
+            <a-form-model-item style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
+              <a-select prop='style' v-model="k.style" style="width: 200px">
                 <a-select-option :value="1">
                   样式一
                 </a-select-option>
@@ -69,7 +69,10 @@ export default {
   data () {
     return {
       rules: {
-        cms: [{ required: true, message: '请输入文章作者！' }]
+        name: [{ required: true, message: '请输入文章作者！' }],
+        icon: [{ required: true, message: '请输入文章作者！' }],
+        menu: [{ required: true, message: 'Please select Activity zone', trigger: 'change' }],
+        style: [{ required: true, message: 'Please select Activity zone', trigger: 'change' }]
       },
       'postCategory': {},
       'cms': {}
@@ -86,6 +89,7 @@ export default {
         that.$message.error(res.message)
         return []
       }
+      console.log(res.result.data[0].value)
       this.cms = res.result.data[0].value
     })
   },

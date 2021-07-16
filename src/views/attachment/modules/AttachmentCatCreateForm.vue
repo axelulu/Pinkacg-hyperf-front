@@ -91,13 +91,11 @@ export default {
     }
   },
   created () {
-    this.loadTopAttachmentCat()
     // 防止表单未注册
     fields.forEach(v => this.form.getFieldDecorator(v))
 
     // 当 model 发生改变时，为表单设置值
     this.$watch('model', () => {
-      this.loadTopAttachmentCat()
       this.model.son = this.getSonTree(this.topAttachmentCat, this.model.id)
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
@@ -121,24 +119,6 @@ export default {
       }
       arrRes = rev(dataSource, id)
       return arrRes
-    },
-    async loadTopAttachmentCat () {
-      const that = this
-      await getAttachmentCatList()
-        .then(res => {
-          if (res.code !== 200) {
-            that.$message.error(res.message)
-            return []
-          }
-          that.topAttachmentCat = res.result.data
-          that.topAttachmentCat.unshift({
-            id: 0,
-            label: '顶级分类',
-            value: 'op',
-            son: 0,
-            children: []
-          })
-        })
     }
   }
 }

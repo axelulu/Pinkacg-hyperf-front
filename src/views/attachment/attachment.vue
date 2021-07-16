@@ -110,7 +110,7 @@
 import moment from 'moment'
 import { STable } from '@/components'
 import { getAttachmentList, updateAttachmentList, createAttachmentList, deleteAttachmentList } from '@/api/attachment'
-
+import { getImg } from '@/utils/util'
 import CreateForm from './modules/AttachmentCreateForm'
 
 const columns = [
@@ -127,11 +127,6 @@ const columns = [
     title: '附件原始名',
     dataIndex: 'original_name',
     scopedSlots: { customRender: 'original_name' }
-  },
-  {
-    title: '附件名称',
-    dataIndex: 'filename',
-    scopedSlots: { customRender: 'filename' }
   },
   {
     title: '附件路径',
@@ -186,7 +181,8 @@ export default {
   name: 'TableList',
   components: {
     STable,
-    CreateForm
+    CreateForm,
+    getImg
   },
   data () {
     this.columns = columns
@@ -240,19 +236,7 @@ export default {
   },
   methods: {
     handleAdd () {
-      this.mdl = {
-        'header_img': '',
-        'download': [
-          {
-            'name': '',
-            'link': '',
-            'pwd': '',
-            'pwd2': '',
-            'credit': ''
-          }
-        ],
-        'download_status': true
-      }
+      this.mdl = {}
       this.visible = true
     },
     handleEdit (record) {
@@ -264,10 +248,6 @@ export default {
       this.confirmLoading = true
       form.setFieldsValue(this.mdl)
       form.validateFields((errors, values) => {
-        console.log(values)
-        values.tag = JSON.stringify(values.tag)
-        values.menu = JSON.stringify(values.menu)
-        values.download = JSON.stringify(values.download)
         console.log(values)
         if (!errors) {
           if (values.id > 0) {
@@ -283,7 +263,6 @@ export default {
               res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           } else {
-            values.created_id = values.username
             // 新增
             createAttachmentList(values).then(res => {
               this.visible = false

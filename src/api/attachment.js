@@ -36,6 +36,7 @@ export function updateAttachmentList (parameter) {
 export function deleteAttachmentList (parameter) {
   return request({
     url: api.attachmentDelete + '/' + parameter.id,
-    method: 'delete'
+    method: 'delete',
+    data: parameter
   })
 }

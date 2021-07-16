@@ -62,7 +62,10 @@
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章内容">
           <QuillEditor
-            :postId="model.author"
+            v-if='model.author || !model.id'
+            :user_id="model.author"
+            :post_id="model.id"
+            :content_file="model.content_file"
             @change="changeContent"
             v-model="model.content"/>
         </a-form-model-item>
@@ -78,7 +81,7 @@
             :before-upload="beforeUpload"
             :customRequest="getUploadPostImg"
           >
-            <img width='200px' v-if="model.header_img" :src="getImg(model.header_img)" alt="avatar" />
+            <img width='200px' v-if="model.header_img" :src="getImg(this.header_img)" alt="avatar" />
             <div v-else>
               <a-icon :type="loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -175,7 +178,7 @@
             <a-form-model-item style="margin-bottom: 6px">
               <a-input v-model="k.pwd" addon-before="提取密码" style="width: 30%;margin-right: 3%" placeholder="提取密码"/>
               <a-input v-model="k.pwd2" addon-before="解压密码" style="width: 30%;margin-right: 3%" placeholder="提取密码"/>
-              所需积分： <a-input-number v-model="k.credit" placeholder="下载积分" style="30%;margin-right: 3%"/>
+              所需积分： <a-input-number v-model="k.credit" placeholder="下载积分" style="margin-right: 3%"/>
             </a-form-model-item>
           </a-form>
           <div style="margin-bottom: 6px">
@@ -213,10 +216,10 @@ import { getUserList } from '@/api/user'
 import { getTagList } from '@/api/tag'
 import { getCategoryList } from '@/api/category'
 import { getImg } from '@/utils/util'
-import { uploadPostImg } from '@/api/upload'
+import { uploadFile } from '@/api/upload'
 
 // 表单字段
-const fields = ['id', 'author', 'title', 'content', 'excerpt', 'type', 'status', 'comment_status', 'download_status', 'menu', 'tag', 'guid', 'comment_count', 'download', 'music', 'video', 'header_img', 'views', 'updated_at']
+const fields = ['id', 'author', 'title', 'content', 'content_file', 'excerpt', 'type', 'status', 'comment_status', 'download_status', 'menu', 'tag', 'guid', 'comment_count', 'download', 'music', 'video', 'header_img', 'views', 'updated_at']
 
 export default {
   components: {
@@ -273,6 +276,7 @@ export default {
       postCategory: {},
       roleList: {},
       form: this.$form.createForm(this),
+      header_img: '',
       getImg
     }
   },
@@ -288,6 +292,9 @@ export default {
       this.PostAuthor()
       this.PostTag()
       this.PostCategory()
+      if (!this.header_img) {
+        this.header_img = this.model.header_img
+      }
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
   },
@@ -306,16 +313,16 @@ export default {
       const that = this
       const formData = new FormData()
       formData.append('file', info.file)
-      formData.append('id', this.model.id)
       // 开始上传
       this.upload_loading = true
-      uploadPostImg(formData).then((res) => {
+      uploadFile(formData).then((res) => {
         if (res.code !== 200) {
           that.$message.error(res.message)
           that.upload_loading = false
           return []
         }
-        that.model.header_img = res.result.link
+        that.header_img = res.result.link
+        that.model.header_img = res.result.data
         that.$message.success(res.message)
         that.upload_loading = false
       })

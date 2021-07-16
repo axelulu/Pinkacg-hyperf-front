@@ -256,6 +256,7 @@ export default {
       this.confirmLoading = true
       form.setFieldsValue(this.mdl)
       form.validateFields((errors, values) => {
+        console.log(values)
         if (!errors) {
           if (values.id > 0) {
             // 修改 e.g.

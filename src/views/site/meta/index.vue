@@ -16,6 +16,39 @@
             name="web_name"
             placeholder="请输入网站标题！"/>
         </a-form-model-item>
+        <a-form-item
+          prop='post_id'
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
+          label="系统附件保存路径">
+          <a-select v-model="site_meta.system_attachment" style="width: 200px">
+            <a-select-option v-for="k in topAttachmentCat" :key="k.id" :value="k.slug">
+              {{ k.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item
+          prop='post_id'
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
+          label="用户附件保存路径">
+          <a-select v-model="site_meta.user_attachment" style="width: 200px">
+            <a-select-option v-for="k in topAttachmentCat" :key="k.id" :value="k.slug">
+              {{ k.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item
+          prop='post_id'
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
+          label="文章附件保存路径">
+          <a-select v-model="site_meta.post_attachment" style="width: 200px">
+            <a-select-option v-for="k in topAttachmentCat" :key="k.id" :value="k.slug">
+              {{ k.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
         <a-form-model-item
           label="网站logo"
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
@@ -99,6 +132,7 @@
 
 <script>
 import { getSettingList, updateSettingList } from '@/api/setting'
+import { getAttachmentCatList } from '@/api/attachmentCat'
 import { getImg } from '@/utils/util'
 import { uploadSiteMeta } from '@/api/upload'
 
@@ -114,14 +148,28 @@ export default {
         seo_keywords: [{ required: true, message: '请输入文章作者！' }]
       },
       'site_meta': {},
+      'topAttachmentCat': {},
       'upload_loading': false,
       getImg
     }
   },
   created () {
     this.getSetting()
+    this.loadTopAttachmentCat()
   },
   methods: {
+    async loadTopAttachmentCat () {
+      const that = this
+      await getAttachmentCatList()
+        .then(res => {
+          if (res.code !== 200) {
+            that.$message.error(res.message)
+            return []
+          }
+          that.topAttachmentCat = res.result.data
+          console.log(that.topAttachmentCat)
+        })
+    },
     async getSetting () {
       const that = this
       await getSettingList({
@@ -139,6 +187,8 @@ export default {
       const formData = new FormData()
       formData.append('file', info.file)
       formData.append('id', 0)
+      formData.append('user_id', 0)
+      formData.append('post_id', 0)
       // 开始上传
       this.upload_loading = true
       uploadSiteMeta(formData).then((res) => {

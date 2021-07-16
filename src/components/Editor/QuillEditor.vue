@@ -5,6 +5,9 @@
           list-type="picture"
           :multiple="true"
           :customRequest="getUploadPostImg"
+          :fileList="content_file"
+          @preview="preview"
+          class="upload-list-inline"
       >
         <a-button> <a-icon class="upload" type="upload" /> upload </a-button>
       </a-upload>
@@ -28,7 +31,8 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 import { quillEditor } from 'vue-quill-editor'
-import { uploadPostImg } from '@/api/upload'
+import { uploadFile } from '@/api/upload'
+import { getImg } from '@/utils/util'
 // 工具栏配置
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
@@ -118,12 +122,22 @@ export default {
     value: {
       type: String
     },
-    userId: {
+    user_id: {
       type: Number
-    }
+    },
+    post_id: {
+      type: Number
+    },
+    content_file: {}
   },
   created () {
     this.content = this.value
+    if (this.content_file.length > 0) {
+      this.content_file.forEach(item => {
+        item.url = getImg(item.url)
+        item.thumbUrl = getImg(item.thumbUrl)
+      })
+    }
   },
   data () {
     return {
@@ -147,14 +161,27 @@ export default {
     }
   },
   methods: {
+    preview (file) {
+      console.log(file.url)
+      // 获取富文本组件实例
+      const quill = this.$refs.myQuillEditor.quill
+      // 获取光标所在位置
+      if (quill.getSelection() === null) {
+        quill.focus()
+      }
+      const length = quill.getSelection().index
+      // 插入图片，res为服务器返回的图片链接地址
+      quill.insertEmbed(length, 'image', file.url)
+      // 调整光标到最后
+      quill.setSelection(length + 1)
+    },
     getUploadPostImg (info) {
       const that = this
       const formData = new FormData()
       formData.append('file', info.file)
-      formData.append('id', this.userId)
       // 开始上传
       this.upload_loading = true
-      uploadPostImg(formData).then((res) => {
+      uploadFile(formData).then((res) => {
         if (res.code !== 200) {
           that.$message.error(res.message)
           that.upload_loading = false
@@ -168,9 +195,12 @@ export default {
         }
         const length = quill.getSelection().index
         // 插入图片，res为服务器返回的图片链接地址
-        quill.insertEmbed(length, 'image', process.env.VUE_APP_API_BASE_SERVER_HOST + res.result.link)
+        quill.insertEmbed(length, 'image', getImg(res.result.link))
         // 调整光标到最后
         quill.setSelection(length + 1)
+        info.file.thumbUrl = res.result.link
+        this.content_file.push(res.result.data)
+        console.log(this.content_file)
         that.$message.success(res.message)
         that.upload_loading = false
       })

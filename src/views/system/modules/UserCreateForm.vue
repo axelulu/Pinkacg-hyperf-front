@@ -28,7 +28,7 @@
             :customRequest="value => getUploadAvatar(value, 'avatar')"
             :before-upload="beforeUpload"
           >
-            <img style='height: 150px' v-if="model.avatar" :src="getImg(model.avatar)" alt="avatar" />
+            <img style='width: 150px' v-if="model.avatar" :src="getImg(this.avatarImg)" alt="avatar" />
             <div v-else>
               <a-icon :type="avatarUpload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -47,7 +47,7 @@
             :customRequest="value => getUploadAvatar(value, 'background')"
             :before-upload="beforeUpload"
           >
-            <img style='height: 200px' v-if="model.background" :src="getImg(model.background)" alt="avatar" />
+            <img style='width: 200px' v-if="model.background" :src="getImg(this.backgroundImg)" alt="avatar" />
             <div v-else>
               <a-icon :type="backgroundUpload_loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -147,7 +147,7 @@
 import pick from 'lodash.pick'
 import { getRoleList } from '@/api/role'
 import { getImg } from '@/utils/util'
-import { uploadAvatar } from '@/api/upload'
+import { uploadFile } from '@/api/upload'
 
 // 表单字段
 const fields = ['id', 'avatar', 'background', 'name', 'desc', 'username', 'email', 'telephone', 'answertest', 'password', 'ip', 'user_role', 'check', 'updated_at']
@@ -194,6 +194,8 @@ export default {
         background: [{ required: true, message: '请输入背景！' }]
       },
       roleList: {},
+      avatarImg: '',
+      backgroundImg: '',
       confirmDirty: false,
       avatarUpload_loading: false,
       backgroundUpload_loading: false,
@@ -208,6 +210,10 @@ export default {
 
     // 当 model 发生改变时，为表单设置值
     this.$watch('model', () => {
+      if (!this.avatarImg && !this.backgroundImg) {
+        this.avatarImg = this.model.avatar
+        this.backgroundImg = this.model.background
+      }
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
   },
@@ -216,14 +222,13 @@ export default {
       const that = this
       const formData = new FormData()
       formData.append('file', info.file)
-      formData.append('id', this.model.id)
       // 开始上传
       if (value === 'avatar') {
         this.avatarUpload_loading = true
       } else if (value === 'background') {
         this.backgroundUpload_loading = true
       }
-      uploadAvatar(formData).then((res) => {
+      uploadFile(formData).then((res) => {
         if (res.code !== 200) {
           that.$message.error(res.message)
           if (value === 'avatar') {
@@ -233,11 +238,14 @@ export default {
           }
           return []
         }
-        that.model[value] = res.result.link
         that.$message.success(res.message)
         if (value === 'avatar') {
+          that.avatarImg = res.result.link
+          that.model.avatar = res.result.data
           this.avatarUpload_loading = false
         } else if (value === 'background') {
+          that.backgroundImg = res.result.link
+          that.model.background = res.result.data
           this.backgroundUpload_loading = false
         }
       })

@@ -94,5 +94,5 @@ export function scorePassword (pass) {
   return parseInt(score)
 }
 export function getImg (img) {
-  return process.env.VUE_APP_API_BASE_SERVER_HOST + '/' + img
+  return process.env.VUE_APP_API_BASE_SERVER_HOST + img
 }

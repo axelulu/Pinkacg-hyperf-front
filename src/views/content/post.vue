@@ -232,6 +232,7 @@ export default {
     handleAdd () {
       this.mdl = {
         'header_img': '',
+        'content_file': [],
         'download': [
           {
             'name': '',
