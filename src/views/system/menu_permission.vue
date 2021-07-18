@@ -5,7 +5,7 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="权限id">
+              <a-form-item label="菜单id">
                 <a-input-number v-model="queryParam.id" style="width: 100%"/>
               </a-form-item>
             </a-col>
@@ -18,16 +18,9 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="名称">
-                  <a-input v-model="queryParam.name" style="width: 100%"/>
-                </a-form-item>
-              </a-col>
-            </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button type="primary" @click="loadTopMenu()">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
                 <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? '收起' : '展开' }}
@@ -53,26 +46,19 @@
         </a-dropdown>
       </div>
 
-      <s-table
+      <a-table
         ref="table"
-        size="default"
-        :rowKey="record=>record.id"
         :columns="columns"
-        :data="loadData"
-        :alert="true"
-        :rowSelection="rowSelection"
-        showPagination="auto"
-      >
-        <span slot="id" slot-scope="text">
-          {{ text.id }}
-        </span>
+        :data-source="topMenu"
+        :rowKey="record=>record.id"
+        :loading="loading"
+        class="components-table-demo-nested">
         <span slot="method" slot-scope="method">
           <a-tag v-for="tag in method" :key="tag" color="blue">{{ tag }}</a-tag>
         </span>
         <span slot="status" slot-scope="status">
           <a-badge :status="status | statusTypeFilter" :text="status | statusFilter" />
         </span>
-
         <span slot="action" slot-scope="text, record">
           <template>
             <a @click="handleEdit(record)">编辑</a>
@@ -80,7 +66,7 @@
             <a @click="handleSub(record)">删除</a>
           </template>
         </span>
-      </s-table>
+      </a-table>
 
       <create-form
         ref="createModal"
@@ -96,52 +82,19 @@
 
 <script>
 import { STable } from '@/components'
-import { getPermissionList, createPermissionList, updatePermissionList, deletePermissionList } from '@/api/permission'
+import { getMenuList, createMenuList, updateMenuList, deleteMenuList } from '@/api/menu_permission'
 
-import CreateForm from './modules/PermissionCreateForm'
+import CreateForm from './modules/MenuCreateForm'
 
 const columns = [
-  {
-    title: 'id',
-    scopedSlots: { customRender: 'id' }
-  },
-  {
-    title: '标题',
-    dataIndex: 'title',
-    filteredValue: 'p_id',
-    scopedSlots: { customRender: 'title' }
-  },
-  {
-    title: '链接',
-    dataIndex: 'url',
-    scopedSlots: { customRender: 'url' }
-  },
-  {
-    title: '路径',
-    dataIndex: 'path',
-    scopedSlots: { customRender: 'path' }
-  },
-  {
-    title: '方法',
-    dataIndex: 'method',
-    scopedSlots: { customRender: 'method' }
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    scopedSlots: { customRender: 'status' }
-  },
-  {
-    title: '更新时间',
-    dataIndex: 'updated_at',
-    sorter: true
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    width: '150px',
-    scopedSlots: { customRender: 'action' }
-  }
+  { title: 'id', dataIndex: 'id', key: 'id', scopedSlots: { customRender: 'id' } },
+  { title: '标题', dataIndex: 'title', key: 'title' },
+  { title: '链接', dataIndex: 'url', key: 'url' },
+  { title: '路径', dataIndex: 'path', key: 'path' },
+  { title: '方法', dataIndex: 'method', key: 'method', scopedSlots: { customRender: 'method' } },
+  { title: '状态', dataIndex: 'status', key: 'status', scopedSlots: { customRender: 'status' } },
+  { title: '更新时间', dataIndex: 'updated_at', key: 'updated_at' },
+  { title: '操作', key: 'action', scopedSlots: { customRender: 'action' } }
 ]
 
 const statusMap = {
@@ -164,28 +117,19 @@ export default {
   data () {
     this.columns = columns
     return {
+      topMenu: [],
       // create model
       visible: false,
+      loading: false,
       confirmLoading: false,
       mdl: null,
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {},
-      // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
-        const that = this
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        requestParameters.is_menu = 0
-        return getPermissionList(requestParameters)
-          .then(res => {
-            if (res.code !== 200) {
-              that.$message.error(res.message)
-              return []
-            }
-            return res.result
-          })
+      queryParam: {
+        'p_id': 0
       },
+      // 加载数据方法 必须为 Promise 对象
       selectedRowKeys: [],
       selectedRows: []
     }
@@ -206,11 +150,27 @@ export default {
       }
     }
   },
+  created () {
+    this.loadTopMenu()
+  },
   methods: {
+    async loadTopMenu () {
+      const that = this
+      this.loading = true
+      await getMenuList(this.queryParam)
+        .then(res => {
+          if (res.code !== 200) {
+            that.$message.error(res.message)
+            return []
+          }
+          that.topMenu = res.result.data
+          this.loading = false
+        })
+    },
     handleAdd () {
       this.mdl = {
         'status': true,
-        'is_menu': false
+        'is_menu': true
       }
       this.visible = true
     },
@@ -225,25 +185,25 @@ export default {
         if (!errors) {
           if (values.id > 0) {
             // 修改 e.g.
-            updatePermissionList(values).then(res => {
+            updateMenuList(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
               form.resetFields()
               // 刷新表格
-              this.$refs.table.refresh()
+              this.loadTopMenu()
 
               res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           } else {
             // 新增
-            createPermissionList(values).then(res => {
+            createMenuList(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
               form.resetFields()
               // 刷新表格
-              this.$refs.table.refresh()
+              this.loadTopMenu()
 
               res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
@@ -266,13 +226,13 @@ export default {
         title: '你确定要删除项目吗?',
         content: '如果你删除了此项目，将不可恢复！',
         onOk () {
-          deletePermissionList(record).then(res => {
+          deleteMenuList(record).then(res => {
             that.visible = false
             that.confirmLoading = false
             // 重置表单数据
             form.resetFields()
             // 刷新表格
-            that.$refs.table.refresh()
+            that.loadTopMenu()
             res.code === 200 ? that.$message.success(res.message) : that.$message.error(res.message)
           })
         },

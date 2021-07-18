@@ -1,19 +1,19 @@
 import request from '@/utils/request'
 
 const api = {
-  menuList: '/menu/index',
-  menuCreate: '/menu/create',
-  menuUpdate: '/menu/update',
-  menuDelete: '/menu/delete',
-  roleMenuCreate: '/menu/createByRole',
-  roleMenuUpdate: '/menu/updateByRole'
+  MenuPermissionList: '/menu_permission/index',
+  MenuPermissionCreate: '/menu_permission/create',
+  MenuPermissionUpdate: '/menu_permission/update',
+  MenuPermissionDelete: '/menu_permission/delete',
+  roleMenuCreate: '/menu_permission/createByRole',
+  roleMenuUpdate: '/menu_permission/updateByRole'
 }
 
 export default api
 
 export function getMenuList (parameter) {
   return request({
-    url: api.menuList,
+    url: api.MenuPermissionList,
     method: 'get',
     params: parameter
   })
@@ -21,7 +21,7 @@ export function getMenuList (parameter) {
 
 export function createMenuList (parameter) {
   return request({
-    url: api.menuCreate,
+    url: api.MenuPermissionCreate,
     method: 'post',
     data: parameter
   })
@@ -29,7 +29,7 @@ export function createMenuList (parameter) {
 
 export function updateMenuList (parameter) {
   return request({
-    url: api.menuUpdate + '/' + parameter.id,
+    url: api.MenuPermissionUpdate + '/' + parameter.id,
     method: 'put',
     data: parameter
   })
@@ -37,7 +37,7 @@ export function updateMenuList (parameter) {
 
 export function deleteMenuList (parameter) {
   return request({
-    url: api.menuDelete + '/' + parameter.id,
+    url: api.MenuPermissionDelete + '/' + parameter.id,
     method: 'delete'
   })
 }

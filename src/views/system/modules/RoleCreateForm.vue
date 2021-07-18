@@ -65,7 +65,7 @@
 
 <script>
 import pick from 'lodash.pick'
-import { getMenuList } from '@/api/menu'
+import { getMenuList } from '@/api/menu_permission'
 
 // 表单字段
 const fields = ['id', 'description', 'name', 'rolePermission', 'status', 'updated_at']

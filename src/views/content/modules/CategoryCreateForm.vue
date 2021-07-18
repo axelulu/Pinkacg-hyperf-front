@@ -161,9 +161,8 @@ export default {
           that.topCategory.unshift({
             id: 0,
             label: '顶级分类',
-            value: 'op',
-            son: 0,
-            children: []
+            value: 1,
+            son: 1
           })
         })
     }

@@ -164,7 +164,7 @@
 
 <script>
 import pick from 'lodash.pick'
-import { getMenuList } from '@/api/menu'
+import { getMenuList } from '@/api/menu_permission'
 
 // 表单字段
 const fields = ['id', 'method', 'p_id', 'name', 'icon', 'path', 'url', 'password', 'is_menu', 'title', 'status', 'sort', 'updated_at']
@@ -284,8 +284,7 @@ export default {
   },
   created () {
     getMenuList({
-      'p_id': 0,
-      'is_menu': 1
+      'p_id': 0
     }).then(res => {
       this.topMenu = res.result.data
     })

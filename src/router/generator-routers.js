@@ -23,8 +23,7 @@ const constantRouterComponents = {
   'Footer': () => import('@/views/site/footer'),
 
   // system
-  'Menu': () => import('@/views/system/menu'),
-  'Permission': () => import('@/views/system/permission'),
+  'Menu': () => import('@/views/system/menu_permission'),
   'Role': () => import('@/views/system/role'),
   'User': () => import('@/views/system/user'),
 
