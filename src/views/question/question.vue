@@ -5,38 +5,23 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="用户id">
+              <a-form-item label="问题id">
                 <a-input-number v-model="queryParam.id" style="width: 100%"/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <a-form-item label="使用状态">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="publish">
-                  <a-select-option value="%">全部</a-select-option>
-                  <a-select-option value="publish">发布</a-select-option>
-                  <a-select-option value="draft">草稿</a-select-option>
+              <a-form-item label="问题分类">
+                <a-select v-model="queryParam.category">
+                  <a-select-option v-for='(v, k) in topQuestionCat' :key='k' :value="v.slug">
+                    {{ v.name }}
+                  </a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="标题">
-                  <a-input v-model="queryParam.title" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="作者id">
-                  <a-input-number v-model="queryParam.author" style="width: 100%"/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="文章类型">
-                  <a-select v-model="queryParam.type" placeholder="请选择" default-value="post">
-                    <a-select-option value="%">全部</a-select-option>
-                    <a-select-option value="post">文章</a-select-option>
-                    <a-select-option value="video">视频</a-select-option>
-                    <a-select-option value="music">音乐</a-select-option>
-                  </a-select>
+                <a-form-item label="问题标题">
+                  <a-input v-model="queryParam.question" placeholder=""/>
                 </a-form-item>
               </a-col>
             </template>
@@ -81,10 +66,6 @@
         <span slot="id" slot-scope="text">
           {{ text.id }}
         </span>
-        <span slot="check" slot-scope="text">
-          <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
-        </span>
-
         <span slot="action" slot-scope="text, record">
           <template>
             <a @click="handleEdit(record)">编辑</a>
@@ -109,49 +90,45 @@
 <script>
 import moment from 'moment'
 import { STable } from '@/components'
-import { getPostList, updatePostList, createPostList, deletePostList } from '@/api/post'
+import { getQuestionList, updateQuestionList, createQuestionList, deleteQuestionList } from '@/api/question'
 
-import CreateForm from './modules/PostCreateForm'
+import CreateForm from './modules/QuestionCreateForm'
+import { getQuestionCatList } from '@/api/questionCat'
 
 const columns = [
   {
-    title: '文章id',
+    title: '问题id',
     scopedSlots: { customRender: 'id' }
   },
   {
-    title: '作者',
-    dataIndex: 'author',
-    scopedSlots: { customRender: 'author' }
+    title: '问题',
+    dataIndex: 'question',
+    scopedSlots: { customRender: 'label' }
   },
   {
-    title: '标题',
-    dataIndex: 'title',
-    scopedSlots: { customRender: 'title' }
+    title: 'A选项',
+    dataIndex: 'A',
+    scopedSlots: { customRender: 'A' }
   },
   {
-    title: '类型',
-    dataIndex: 'type',
-    scopedSlots: { customRender: 'type' }
+    title: 'B选项',
+    dataIndex: 'B',
+    scopedSlots: { customRender: 'B' }
   },
   {
-    title: '状态',
-    dataIndex: 'status',
-    scopedSlots: { customRender: 'status' }
+    title: 'C选项',
+    dataIndex: 'C',
+    scopedSlots: { customRender: 'C' }
   },
   {
-    title: '观看',
-    dataIndex: 'views',
-    scopedSlots: { customRender: 'views' }
+    title: 'D选项',
+    dataIndex: 'D',
+    scopedSlots: { customRender: 'D' }
   },
   {
-    title: '菜单',
-    dataIndex: 'menu',
-    scopedSlots: { customRender: 'menu' }
-  },
-  {
-    title: '更新时间',
-    dataIndex: 'updated_at',
-    sorter: true
+    title: '答案',
+    dataIndex: 'answer',
+    scopedSlots: { customRender: 'answer' }
   },
   {
     title: '操作',
@@ -182,6 +159,7 @@ export default {
     this.columns = columns
     return {
       // create model
+      topQuestionCat: [],
       visible: false,
       confirmLoading: false,
       mdl: null,
@@ -190,16 +168,14 @@ export default {
       // 查询参数
       queryParam: {
         'id': null,
-        'title': null,
-        'status': null,
-        'type': null,
-        'author': null
+        'value': null,
+        'status': null
       },
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
         const that = this
         const requestParameters = Object.assign({}, parameter, this.queryParam)
-        return getPostList(requestParameters)
+        return getQuestionList(requestParameters)
           .then(res => {
             if (res.code !== 200) {
               that.$message.error(res.message)
@@ -220,6 +196,9 @@ export default {
       return statusMap[type].status
     }
   },
+  created () {
+    this.loadTopQuestionCat()
+  },
   computed: {
     rowSelection () {
       return {
@@ -229,20 +208,20 @@ export default {
     }
   },
   methods: {
+    async loadTopQuestionCat () {
+      const that = this
+      await getQuestionCatList()
+        .then(res => {
+          if (res.code !== 200) {
+            that.$message.error(res.message)
+            return []
+          }
+          that.topQuestionCat = res.result.data
+        })
+    },
     handleAdd () {
       this.mdl = {
-        'header_img': '',
-        'content_file': [],
-        'download': [
-          {
-            'name': '',
-            'link': '',
-            'pwd': '',
-            'pwd2': '',
-            'credit': ''
-          }
-        ],
-        'download_status': true
+        'status': true
       }
       this.visible = true
     },
@@ -256,14 +235,10 @@ export default {
       form.setFieldsValue(this.mdl)
       form.validateFields((errors, values) => {
         console.log(values)
-        values.tag = JSON.stringify(values.tag)
-        values.menu = JSON.stringify(values.menu)
-        values.download = JSON.stringify(values.download)
-        console.log(values)
         if (!errors) {
           if (values.id > 0) {
             // 修改 e.g.
-            updatePostList(values).then(res => {
+            updateQuestionList(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
@@ -275,7 +250,7 @@ export default {
             })
           } else {
             // 新增
-            createPostList(values).then(res => {
+            createQuestionList(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
@@ -304,7 +279,7 @@ export default {
         title: '你确定要删除项目吗?',
         content: '如果你删除了此项目，将不可恢复！',
         onOk () {
-          deletePostList(record).then(res => {
+          deleteQuestionList(record).then(res => {
             that.visible = false
             that.confirmLoading = false
             // 重置表单数据

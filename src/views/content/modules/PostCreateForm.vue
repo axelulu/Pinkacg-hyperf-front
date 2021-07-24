@@ -108,14 +108,11 @@
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章标签">
-          <a-tree-select
-            v-model="model.tag"
-            style="width: 100%"
-            :tree-data="postTag"
-            tree-checkable
-            :replaceFields="{children:'children', title:'title', key:'id', value: 'value' }"
-            search-placeholder="Please select"
-          />
+          <a-select v-model='model.tag' mode="tags" style="width: 100%" placeholder="请输入标签">
+            <a-select-option v-for="(v, k) in postTag" :key="k" :value='v.value'>
+              {{ v.label }}
+            </a-select-option>
+          </a-select>
         </a-form-model-item>
         <a-form-model-item
           prop='status'
@@ -149,18 +146,51 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
-          prop='comment_status'
+          prop='download_status'
+          v-if="model && model.type === 'music'"
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
-          label="评论状态">
-          <a-switch v-model="model.comment_status" />
+          label="音乐">
+          <a-form v-for="(k, v) in model.music" style='margin-bottom: 20px' :key="v">
+            <a-form-model-item style="margin-bottom: 6px">
+              <a-input v-model="k.name" addon-before="链接名称" placeholder="请输入链接名称！" />
+            </a-form-model-item>
+            <a-form-model-item style="margin-bottom: 6px">
+              <a-input v-model="k.link" addon-before="下载链接" placeholder="请输入下载链接！"/>
+            </a-form-model-item>
+          </a-form>
+          <div style="margin-bottom: 6px">
+            <a-button @click="addMusic" style="width: 48%;margin-right: 2%" type="primary" block>
+              添加
+            </a-button>
+            <a-button @click="deleteMusic" style="width: 48%;margin-left: 2%" type="danger" block>
+              删除
+            </a-button>
+          </div>
         </a-form-model-item>
         <a-form-model-item
           prop='download_status'
+          v-if="model && model.type === 'video'"
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
-          label="开启下载">
-          <a-switch @change="downloadStatus" v-model="model.download_status" />
+          label="视频">
+          <a-form v-for="(k, v) in model.video" style='margin-bottom: 20px' :key="v">
+            <a-form-model-item style="margin-bottom: 6px">
+              <a-input v-model="k.name" addon-before="视频名称" placeholder="请输入链接名称！" />
+            </a-form-model-item>
+            <a-form-model-item style="margin-bottom: 6px">
+              <a-input v-model="k.link" addon-before="视频链接" style="width: 72%;margin-right: 3%" placeholder="请输入下载链接！"/>
+              所需积分： <a-input-number v-model="k.credit" placeholder="视频积分" style="margin-right: 3%"/>
+            </a-form-model-item>
+          </a-form>
+          <div style="margin-bottom: 6px">
+            <a-button @click="addVideo" style="width: 48%;margin-right: 2%" type="primary" block>
+              添加
+            </a-button>
+            <a-button @click="deleteVideo" style="width: 48%;margin-left: 2%" type="danger" block>
+              删除
+            </a-button>
+          </div>
         </a-form-model-item>
         <a-form-model-item
           prop='download_status'
@@ -168,7 +198,7 @@
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="下载链接">
-          <a-form v-for="(k, v) in model.download" :key="v">
+          <a-form v-for="(k, v) in model.download" style='margin-bottom: 20px' :key="v">
             <a-form-model-item style="margin-bottom: 6px">
               <a-input v-model="k.name" addon-before="链接名称" placeholder="请输入链接名称！" />
             </a-form-model-item>
@@ -189,6 +219,20 @@
               删除
             </a-button>
           </div>
+        </a-form-model-item>
+        <a-form-model-item
+          prop='comment_status'
+          :labelCol="{lg: {span: 3}, sm: {span: 3}}"
+          :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
+          label="评论状态">
+          <a-switch v-model="model.comment_status" />
+        </a-form-model-item>
+        <a-form-model-item
+          prop='download_status'
+          :labelCol="{lg: {span: 3}, sm: {span: 3}}"
+          :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
+          label="开启下载">
+          <a-switch @change="downloadStatus" v-model="model.download_status" />
         </a-form-model-item>
         <a-form-model-item
           prop='comment_count'
@@ -360,10 +404,40 @@ export default {
         'pwd2': '',
         'credit': ''
       })
-      console.log(this.model.download)
     },
     deleteDownload () {
-      this.model.download.pop()
+      if (this.model.download.length > 1) {
+        this.model.download.pop()
+      } else {
+        this.$message.warn('至少要保留一个')
+      }
+    },
+    addMusic () {
+      this.model.music.push({
+        'name': '',
+        'link': ''
+      })
+    },
+    deleteMusic () {
+      if (this.model.music.length > 1) {
+        this.model.music.pop()
+      } else {
+        this.$message.warn('至少要保留一个')
+      }
+    },
+    addVideo () {
+      this.model.video.push({
+        'name': '',
+        'link': '',
+        'credit': ''
+      })
+    },
+    deleteVideo () {
+      if (this.model.video.length > 1) {
+        this.model.video.pop()
+      } else {
+        this.$message.warn('至少要保留一个')
+      }
     },
     async PostAuthor () {
       const that = this

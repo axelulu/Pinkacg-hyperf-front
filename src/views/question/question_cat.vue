@@ -5,44 +5,29 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="用户id">
+              <a-form-item label="id">
                 <a-input-number v-model="queryParam.id" style="width: 100%"/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="使用状态">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="publish">
+                <a-select v-model="queryParam.status" placeholder="请选择" default-value="1">
                   <a-select-option value="%">全部</a-select-option>
-                  <a-select-option value="publish">发布</a-select-option>
-                  <a-select-option value="draft">草稿</a-select-option>
+                  <a-select-option value="0">停用</a-select-option>
+                  <a-select-option value="1">启用</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="标题">
-                  <a-input v-model="queryParam.title" placeholder=""/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="作者id">
-                  <a-input-number v-model="queryParam.author" style="width: 100%"/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="文章类型">
-                  <a-select v-model="queryParam.type" placeholder="请选择" default-value="post">
-                    <a-select-option value="%">全部</a-select-option>
-                    <a-select-option value="post">文章</a-select-option>
-                    <a-select-option value="video">视频</a-select-option>
-                    <a-select-option value="music">音乐</a-select-option>
-                  </a-select>
+                <a-form-item label="标识">
+                  <a-input v-model="queryParam.slug" style="width: 100%"/>
                 </a-form-item>
               </a-col>
             </template>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button type="primary" @click="loadTopQuestionCat()">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
                 <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? '收起' : '展开' }}
@@ -68,23 +53,19 @@
         </a-dropdown>
       </div>
 
-      <s-table
+      <a-table
         ref="table"
-        size="default"
-        :rowKey="record=>record.id"
         :columns="columns"
-        :data="loadData"
-        :alert="true"
-        :rowSelection="rowSelection"
-        showPagination="auto"
-      >
-        <span slot="id" slot-scope="text">
-          {{ text.id }}
+        :data-source="topQuestionCat"
+        :loading="loading"
+        :rowKey="record=>record.id"
+        class="components-table-demo-nested">
+        <span slot="method" slot-scope="method">
+          <a-tag v-for="tag in method" :key="tag" color="blue">{{ tag }}</a-tag>
         </span>
-        <span slot="check" slot-scope="text">
-          <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
+        <span slot="status" slot-scope="status">
+          <a-badge :status="status | statusTypeFilter" :text="status | statusFilter" />
         </span>
-
         <span slot="action" slot-scope="text, record">
           <template>
             <a @click="handleEdit(record)">编辑</a>
@@ -92,7 +73,7 @@
             <a @click="handleSub(record)">删除</a>
           </template>
         </span>
-      </s-table>
+      </a-table>
 
       <create-form
         ref="createModal"
@@ -109,56 +90,17 @@
 <script>
 import moment from 'moment'
 import { STable } from '@/components'
-import { getPostList, updatePostList, createPostList, deletePostList } from '@/api/post'
+import { getQuestionCatList, createQuestionCatList, updateQuestionCatList, deleteQuestionCatList } from '@/api/questionCat'
 
-import CreateForm from './modules/PostCreateForm'
+import CreateForm from './modules/QuestionCatCreateForm'
 
 const columns = [
-  {
-    title: '文章id',
-    scopedSlots: { customRender: 'id' }
-  },
-  {
-    title: '作者',
-    dataIndex: 'author',
-    scopedSlots: { customRender: 'author' }
-  },
-  {
-    title: '标题',
-    dataIndex: 'title',
-    scopedSlots: { customRender: 'title' }
-  },
-  {
-    title: '类型',
-    dataIndex: 'type',
-    scopedSlots: { customRender: 'type' }
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    scopedSlots: { customRender: 'status' }
-  },
-  {
-    title: '观看',
-    dataIndex: 'views',
-    scopedSlots: { customRender: 'views' }
-  },
-  {
-    title: '菜单',
-    dataIndex: 'menu',
-    scopedSlots: { customRender: 'menu' }
-  },
-  {
-    title: '更新时间',
-    dataIndex: 'updated_at',
-    sorter: true
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    width: '150px',
-    scopedSlots: { customRender: 'action' }
-  }
+  { title: 'id', dataIndex: 'id', key: 'id', scopedSlots: { customRender: 'id' } },
+  { title: '标题', dataIndex: 'name', key: 'label' },
+  { title: '标记', dataIndex: 'slug', key: 'value' },
+  { title: '状态', dataIndex: 'status', key: 'status', scopedSlots: { customRender: 'status' } },
+  { title: '更新时间', dataIndex: 'updated_at', key: 'updated_at' },
+  { title: '操作', key: 'action', scopedSlots: { customRender: 'action' } }
 ]
 
 const statusMap = {
@@ -181,33 +123,18 @@ export default {
   data () {
     this.columns = columns
     return {
+      topQuestionCat: [],
       // create model
       visible: false,
+      loading: false,
       confirmLoading: false,
       mdl: null,
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
       queryParam: {
-        'id': null,
-        'title': null,
-        'status': null,
-        'type': null,
-        'author': null
       },
       // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
-        const that = this
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        return getPostList(requestParameters)
-          .then(res => {
-            if (res.code !== 200) {
-              that.$message.error(res.message)
-              return []
-            }
-            return res.result
-          })
-      },
       selectedRowKeys: [],
       selectedRows: []
     }
@@ -228,21 +155,26 @@ export default {
       }
     }
   },
+  created () {
+    this.loadTopQuestionCat()
+  },
   methods: {
+    async loadTopQuestionCat () {
+      this.loading = true
+      const that = this
+      await getQuestionCatList(this.queryParam)
+        .then(res => {
+          if (res.code !== 200) {
+            that.$message.error(res.message)
+            return []
+          }
+          that.topQuestionCat = res.result.data
+          this.loading = false
+        })
+    },
     handleAdd () {
       this.mdl = {
-        'header_img': '',
-        'content_file': [],
-        'download': [
-          {
-            'name': '',
-            'link': '',
-            'pwd': '',
-            'pwd2': '',
-            'credit': ''
-          }
-        ],
-        'download_status': true
+        'status': true
       }
       this.visible = true
     },
@@ -253,35 +185,30 @@ export default {
     handleOk () {
       const form = this.$refs.createModal.form
       this.confirmLoading = true
-      form.setFieldsValue(this.mdl)
       form.validateFields((errors, values) => {
-        console.log(values)
-        values.tag = JSON.stringify(values.tag)
-        values.menu = JSON.stringify(values.menu)
-        values.download = JSON.stringify(values.download)
-        console.log(values)
         if (!errors) {
+          console.log(values)
           if (values.id > 0) {
             // 修改 e.g.
-            updatePostList(values).then(res => {
+            updateQuestionCatList(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
               form.resetFields()
               // 刷新表格
-              this.$refs.table.refresh()
+              this.loadTopQuestionCat()
 
               res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
           } else {
             // 新增
-            createPostList(values).then(res => {
+            createQuestionCatList(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
               form.resetFields()
               // 刷新表格
-              this.$refs.table.refresh()
+              this.loadTopQuestionCat()
 
               res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
@@ -304,13 +231,13 @@ export default {
         title: '你确定要删除项目吗?',
         content: '如果你删除了此项目，将不可恢复！',
         onOk () {
-          deletePostList(record).then(res => {
+          deleteQuestionCatList(record).then(res => {
             that.visible = false
             that.confirmLoading = false
             // 重置表单数据
             form.resetFields()
             // 刷新表格
-            that.$refs.table.refresh()
+            that.loadTopQuestionCat()
             res.code === 200 ? that.$message.success(res.message) : that.$message.error(res.message)
           })
         },

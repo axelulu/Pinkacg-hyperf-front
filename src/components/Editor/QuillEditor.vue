@@ -105,7 +105,7 @@ const toolbarOptions = [
       'align': []
     }
   ],
-  ['link', 'image', 'video'],
+  ['link'],
   ['clean']
 ]
 
@@ -134,8 +134,10 @@ export default {
     this.content = this.value
     if (this.content_file.length > 0) {
       this.content_file.forEach(item => {
-        item.url = getImg(item.url)
-        item.thumbUrl = getImg(item.thumbUrl)
+        if (item.url.indexOf('http') === -1 && item.thumbUrl.indexOf('http') === -1) {
+          item.url = getImg(item.url)
+          item.thumbUrl = getImg(item.thumbUrl)
+        }
       })
     }
   },
@@ -143,18 +145,22 @@ export default {
     return {
       content: null,
       editorOption: {
+        placeholder: '请在这里输入', // 提示
+        readyOnly: false, // 是否只读
+        theme: 'snow', // 主题 snow/bubble
+        syntax: true, // 语法检测
         modules: {
           toolbar: {
-            container: toolbarOptions,
-            handlers: {
-              'image': function (value) {
-                if (value) {
-                  document.querySelector('.upload').click()
-                } else {
-                  this.quill.format('image', false)
-                }
-              }
-            }
+            container: toolbarOptions
+            // handlers: {
+            //   'image': function (value) {
+            //     if (value) {
+            //       document.querySelector('.upload').click()
+            //     } else {
+            //       this.quill.format('image', false)
+            //     }
+            //   }
+            // }
           }
         }
       }
@@ -200,7 +206,14 @@ export default {
         quill.setSelection(length + 1)
         info.file.thumbUrl = res.result.link
         this.content_file.push(res.result.data)
-        console.log(this.content_file)
+        this.content_file.push({
+          'uid': res.result.data.title,
+          'name': res.result.data.title + '.' + res.result.data.type,
+          'url': getImg(res.result.link),
+          'status': 'done',
+          'thumbUrl': getImg(res.result.link)
+        })
+        console.log(res.result.data)
         that.$message.success(res.message)
         that.upload_loading = false
       })
@@ -225,7 +238,6 @@ export default {
 
 <style lang="less" scoped>
 @import url('../index.less');
-
 /* 覆盖 quill 默认边框圆角为 ant 默认圆角，用于统一 ant 组件风格 */
 .ant-editor-quill {
   line-height: initial;
@@ -235,5 +247,8 @@ export default {
   /deep/ .ql-container.ql-snow {
     border-radius: 0 0 @border-radius-base @border-radius-base;
   }
+}
+/deep/ .ant-upload-list-picture .ant-upload-list-item-thumbnail img, .ant-upload-list-picture-card .ant-upload-list-item-thumbnail img {
+  object-fit: cover;
 }
 </style>

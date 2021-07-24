@@ -181,7 +181,11 @@ export default {
     handleOk () {
       const form = this.$refs.createModal.form
       this.confirmLoading = true
+      form.setFieldsValue(this.mdl)
       form.validateFields((errors, values) => {
+        values.method = JSON.stringify(values.method)
+        values.key = JSON.stringify(values.key)
+        console.log(values)
         if (!errors) {
           if (values.id > 0) {
             // 修改 e.g.

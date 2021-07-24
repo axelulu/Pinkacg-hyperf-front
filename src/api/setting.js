@@ -14,3 +14,11 @@ export function updateSettingList (parameter) {
     data: parameter
   })
 }
+
+export function getColumnList (parameter) {
+  return request({
+    url: '/tool/getColumnList',
+    method: 'post',
+    data: parameter
+  })
+}

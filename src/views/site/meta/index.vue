@@ -16,7 +16,7 @@
             name="web_name"
             placeholder="请输入网站标题！"/>
         </a-form-model-item>
-        <a-form-item
+        <a-form-model-item
           prop='post_id'
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
           :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
@@ -26,8 +26,8 @@
               {{ k.name }}
             </a-select-option>
           </a-select>
-        </a-form-item>
-        <a-form-item
+        </a-form-model-item>
+        <a-form-model-item
           prop='post_id'
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
           :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
@@ -37,8 +37,8 @@
               {{ k.name }}
             </a-select-option>
           </a-select>
-        </a-form-item>
-        <a-form-item
+        </a-form-model-item>
+        <a-form-model-item
           prop='post_id'
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
           :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
@@ -48,7 +48,18 @@
               {{ k.name }}
             </a-select-option>
           </a-select>
-        </a-form-item>
+        </a-form-model-item>
+        <a-form-model-item
+          prop='question_role'
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
+          label="答题后设置的角色">
+          <a-select v-model="site_meta.question_role" style="width: 200px">
+            <a-select-option v-for="k in roleList" :key="k.id" :value="k.id">
+              {{ k.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
         <a-form-model-item
           label="网站logo"
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
@@ -135,6 +146,7 @@ import { getSettingList, updateSettingList } from '@/api/setting'
 import { getAttachmentCatList } from '@/api/attachmentCat'
 import { getImg } from '@/utils/util'
 import { uploadSiteMeta } from '@/api/upload'
+import { getRoleList } from '@/api/role'
 
 export default {
   name: 'BaseForm',
@@ -147,6 +159,7 @@ export default {
         seo_description: [{ required: true, message: '请输入文章作者！' }],
         seo_keywords: [{ required: true, message: '请输入文章作者！' }]
       },
+      'roleList': [],
       'site_meta': {},
       'topAttachmentCat': {},
       'upload_loading': false,
@@ -154,10 +167,15 @@ export default {
     }
   },
   created () {
+    this.getRole()
     this.getSetting()
     this.loadTopAttachmentCat()
   },
   methods: {
+    async getRole () {
+      const roleLists = await getRoleList()
+      this.roleList = roleLists.result.data
+    },
     async loadTopAttachmentCat () {
       const that = this
       await getAttachmentCatList()
