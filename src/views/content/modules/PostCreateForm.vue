@@ -146,7 +146,6 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
-          prop='download_status'
           v-if="model && model.type === 'music'"
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
@@ -169,7 +168,6 @@
           </div>
         </a-form-model-item>
         <a-form-model-item
-          prop='download_status'
           v-if="model && model.type === 'video'"
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
