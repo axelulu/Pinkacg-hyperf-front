@@ -61,6 +61,17 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
+          prop='register_role'
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
+          label="注册后设置的角色">
+          <a-select v-model="site_meta.register_role" style="width: 200px">
+            <a-select-option v-for="k in roleList" :key="k.id" :value="k.id">
+              {{ k.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item
           label="网站logo"
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
           :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">
