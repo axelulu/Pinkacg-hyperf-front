@@ -2,12 +2,12 @@
   <div :class="prefixCls">
     <div style="margin: 10px 0px">
       <a-upload
-          list-type="picture"
-          :multiple="true"
-          :customRequest="getUploadPostImg"
-          :fileList="content_file"
-          @preview="preview"
-          class="upload-list-inline"
+        list-type="picture"
+        :multiple="true"
+        :customRequest="getUploadPostImg"
+        :fileList="content_file"
+        @preview="preview"
+        class="upload-list-inline"
       >
         <a-button> <a-icon class="upload" type="upload" /> upload </a-button>
       </a-upload>
@@ -122,13 +122,13 @@ export default {
     value: {
       type: String
     },
-    user_id: {
+    userId: {
       type: Number
     },
-    post_id: {
+    postId: {
       type: Number
     },
-    content_file: {}
+    contentFile: {}
   },
   created () {
     this.content = this.value

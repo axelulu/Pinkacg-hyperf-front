@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 const api = {
-  uploadSiteMeta: '/upload/uploadSiteMeta',
-  uploadPostFile: '/upload/uploadPostFile',
-  uploadFile: '/upload/uploadFile'
+  uploadSiteMeta: '/uploadSiteMeta/create',
+  uploadPostFile: '/uploadPostFile/create',
+  uploadFile: '/uploadFile/create'
 }
 
 export default api
