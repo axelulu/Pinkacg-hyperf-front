@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建规则"
+    title="订单编辑"
     :width="640"
     :visible="visible"
     :confirmLoading="loading"
@@ -13,35 +13,35 @@
         <a-form-item v-show="model && model.id > 0" label="主键ID">
           <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
         </a-form-item>
-        <a-form-item label="名称">
+        <a-form-item label="用户id">
           <a-input-number
             v-decorator="[
-          'user_id',
-          {
-            rules: [{ required: true, message: '请输入用户id!', whitespace: true }],
-          },
-        ]"
+              'user_id',
+              {
+                rules: [{ required: true, message: '请输入用户id!' }],
+              },
+            ]"
           />
         </a-form-item>
-        <a-form-item label="标识">
+        <a-form-item label="文章id">
           <a-input-number
             v-decorator="[
-          'post_id',
-          {
-            rules: [{ required: true, message: '请输入文章id!', whitespace: true }],
-          },
-        ]"
+              'post_id',
+              {
+                rules: [{ required: true, message: '请输入文章id!' }],
+              },
+            ]"
           />
         </a-form-item>
         <a-form-item label="类型">
           <a-select
             v-decorator="[
-          'type',
-          {
-            rules: [{ required: true, message: '请输入类型!', whitespace: true }],
-          },
-        ]">
-            <a-select-option value='post'>
+              'type',
+              {
+                rules: [{ required: true, message: '请输入类型!' }],
+              },
+            ]">
+            <a-select-option value="post">
               文章
             </a-select-option>
           </a-select>
@@ -49,21 +49,21 @@
         <a-form-item label="所需积分">
           <a-input-number
             v-decorator="[
-          'credit',
-          {
-            rules: [{ required: true, message: '请输入所需积分!', whitespace: true }],
-          },
-        ]"
+              'credit',
+              {
+                rules: [{ required: true, message: '请输入所需积分!' }],
+              },
+            ]"
           />
         </a-form-item>
         <a-form-item label="文章下载链接下标">
           <a-input-number
             v-decorator="[
-          'download_key',
-          {
-            rules: [{ required: true, message: '请输入文章下载链接下标!', whitespace: true }],
-          },
-        ]"
+              'download_key',
+              {
+                rules: [{ required: true, message: '请输入文章下载链接下标!' }],
+              },
+            ]"
           />
         </a-form-item>
       </a-form>

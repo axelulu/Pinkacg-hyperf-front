@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建规则"
+    title="附件编辑"
     :visible="visible"
     :confirmLoading="loading"
     @ok="handOk"
@@ -29,7 +29,7 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
-          prop='author'
+          prop='user_id'
           label="附件作者">
           <a-select v-model="model.user_id" style="width: 200px">
             <a-select-option v-for="k in postAuthor" :key="k.id" :value="k.id">
@@ -37,7 +37,7 @@
             </a-select-option>
           </a-select>
         </a-form-model-item>
-        <a-form-item
+        <a-form-model-item
           prop='post_id'
           label="所属文章">
           <a-select v-model="model.post_id" style="width: 200px">
@@ -45,7 +45,7 @@
               {{ k.title }}
             </a-select-option>
           </a-select>
-        </a-form-item>
+        </a-form-model-item>
         <a-form-model-item
           prop='header_img'
           label="附件上传">
@@ -56,7 +56,7 @@
             :before-upload="beforeUpload"
             :customRequest="getUploadPostImg"
           >
-            <img width='200px' v-if="model.path" :src="getImg(model.path + '/' + model.filename + '.' + model.type)" alt="avatar" />
+            <img width='200px' v-if="model.path || header_img" :src="header_img ? getImg(header_img) : getImg(model.path + model.filename + '.' + model.type)" alt="avatar" />
             <div v-else>
               <a-icon :type="loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -75,12 +75,12 @@ import pick from 'lodash.pick'
 import QuillEditor from '@/components/Editor/QuillEditor'
 import { getUserList } from '@/api/user'
 import { getImg } from '@/utils/util'
-import { uploadFile } from '@/api/upload'
+import { uploadImgFile } from '@/api/upload'
 import { getAttachmentCatList } from '@/api/attachmentCat'
 import { getPostList } from '@/api/post'
 
 // 表单字段
-const fields = ['id', 'title', 'user_id', 'post_id', 'size', 'cat', 'type', 'path', 'filename', 'original_name', 'cat', 'updated_at']
+const fields = ['id', 'newFile', 'title', 'user_id', 'post_id', 'size', 'cat', 'type', 'path', 'filename', 'original_name', 'updated_at']
 
 export default {
   components: {
@@ -114,7 +114,7 @@ export default {
     return {
       rules: {
         cat: [{ required: true, message: '请输入文件分类！' }],
-        post_id: [{ required: true, message: '请输入文件id！' }],
+        post_id: [{ required: true, message: '请输入文章id！' }],
         user_id: [{ required: true, message: '请输入文件作者id！' }]
       },
       header_img: '',
@@ -134,6 +134,8 @@ export default {
 
     // 当 model 发生改变时，为表单设置值
     this.$watch('model', () => {
+      this.PostAuthor()
+      this.CommentPost()
       this.loadTopAttachmentCat()
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
@@ -165,6 +167,7 @@ export default {
     handOk () {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
+          this.form.setFieldsValue(this.model)
           this.$emit('ok')
         } else {
           this.$message.error('请输入完整数据！')
@@ -179,14 +182,16 @@ export default {
       formData.append('id', this.model.id)
       // 开始上传
       this.upload_loading = true
-      uploadFile(formData).then((res) => {
+      uploadImgFile(formData).then((res) => {
         if (res.code !== 200) {
           that.$message.error(res.message)
           that.upload_loading = false
           return []
         }
         that.header_img = res.result.link
-        that.form.setFieldsValue(res.result.data)
+        that.model.newFile = res.result.data
+        console.log(that.model)
+        that.form.setFieldsValue(that.model)
         that.$message.success(res.message)
         that.upload_loading = false
       })

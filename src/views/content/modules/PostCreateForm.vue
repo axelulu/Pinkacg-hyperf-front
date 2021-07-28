@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建规则"
+    title="文章编辑"
     :width="1000"
     :visible="visible"
     :confirmLoading="loading"
@@ -66,20 +66,21 @@
             ref="myQuillEditor"
             :options="editorOption">
           </quill-editor>
-          <a-upload
-            list-type="picture"
-            :multiple="true"
-            :customRequest="getUploadPostImg"
-            class="upload-list-inline"
-          >
-            <a-button> <a-icon class="upload" type="upload" /> upload </a-button>
-          </a-upload>
         </a-form-model-item>
         <a-form-model-item
           prop="header_img"
           :labelCol="{lg: {span: 3}, sm: {span: 3}}"
           :wrapperCol="{lg: {span: 20}, sm: {span: 25} }"
           label="文章头图">
+          <div>
+            <a-upload
+              list-type="picture"
+              :multiple="true"
+              :customRequest="getUploadPostImg"
+              class="upload-list-inline">
+              <a-button> <a-icon class="upload" type="upload" />上传</a-button>
+            </a-upload>
+          </div>
           <div style="margin-bottom: 40px;margin-right: 2%;float: left;height: 200px;width: 23%;" v-for="(v, k) in model.content_file" :key="k">
             <img style="width: 100%;height: 100%;" :src="v.url ? getImg(v.url) : getImg(v.path + v.filename + &quot;.&quot; + v.type)"/>
             <div>
@@ -156,7 +157,7 @@
             </a-form-model-item>
             <a-form-model-item
               :prop="`music[${v}].link`"
-              :rules="[ { required: true, message: '请输入音乐链接!' }, { min: 10, message: '音乐链接不得小于10字符' }, { max: 100, message: '音乐链接不得超过100字符' }]"
+              :rules="[ {required: true, message: '请输入链接地址', trigger: 'blur'}, { validator: isTrueUrl, trigger: 'blur' } ]"
               style="margin-bottom: 6px">
               <a-input v-model="k.link" addon-before="下载链接" placeholder="请输入下载链接！"/>
             </a-form-model-item>
@@ -183,16 +184,16 @@
               <a-input v-model="k.name" addon-before="视频名称" placeholder="请输入链接名称！" />
             </a-form-model-item>
             <a-form-model-item
+              style="margin-bottom: 6px;margin-right: 6%;display: inline-block;width: 73%;margin-bottom: 6px;"
               :prop="`video[${v}].link`"
-              :rules="[ { required: true, message: '请输入视频链接!' }, { min: 10, message: '视频链接不得小于10字符' }, { max: 100, message: '视频链接不得超过100字符' }]"
-              style="margin-bottom: 6px">
-              <a-input v-model="k.link" addon-before="视频链接" style="width: 72%;margin-right: 3%" placeholder="请输入下载链接！"/>
-              <a-form-model-item
-                :prop="`video[${v}].credit`"
-                :rules="[ { required: true, message: '请输入积分!' }]"
-              >
-                所需积分： <a-input-number v-model="k.credit" placeholder="视频积分" style="margin-right: 3%"/>
-              </a-form-model-item>
+              :rules="[ {required: true, message: '请输入链接地址', trigger: 'blur'}, { validator: isTrueUrl, trigger: 'blur' } ]">
+              <a-input v-model="k.link" addon-before="视频链接" placeholder="请输入下载链接！"/>
+            </a-form-model-item>
+            <a-form-model-item
+              style="margin-bottom: 6px;display: inline-block;width: 21%;margin-bottom: 6px;"
+              :prop="`video[${v}].credit`"
+              :rules="[{ validator: checkCredit }]">
+              所需积分： <a-input-number v-model="k.credit" placeholder="视频积分"/>
             </a-form-model-item>
           </div>
           <div style="margin-bottom: 6px">
@@ -219,17 +220,23 @@
             </a-form-model-item>
             <a-form-model-item
               :prop="`download[${v}].link`"
-              :rules="[ { required: true, message: '请输入下载链接!' }, { min: 10, message: '下载链接不得小于10字符' }, { max: 100, message: '下载链接不得超过100字符' }]"
+              :rules="[ {required: true, message: '请输入链接地址', trigger: 'blur'}, { validator: isTrueUrl, trigger: 'blur' } ]"
               style="margin-bottom: 6px">
               <a-input v-model="k.link" addon-before="下载链接" placeholder="请输入下载链接！"/>
             </a-form-model-item>
             <a-form-model-item
+              style="display: inline-block;width: 36%;margin-right: 4%;margin-bottom: 6px;">
+              <a-input v-model="k.pwd" addon-before="提取密码" placeholder="提取密码"/>
+            </a-form-model-item>
+            <a-form-model-item
+              style="display: inline-block;width: 35%;margin-right: 4%;margin-bottom: 6px;">
+              <a-input v-model="k.pwd2" addon-before="解压密码" placeholder="提取密码"/>
+            </a-form-model-item>
+            <a-form-model-item
+              style="display: inline-block;width: 21%;margin-bottom: 6px;"
               :prop="`download[${v}].credit`"
-              :rules="[{ validator: checkCredit }]"
-              style="margin-bottom: 6px">
-              <a-input v-model="k.pwd" addon-before="提取密码" style="width: 30%;margin-right: 3%" placeholder="提取密码"/>
-              <a-input v-model="k.pwd2" addon-before="解压密码" style="width: 30%;margin-right: 3%" placeholder="提取密码"/>
-              所需积分： <a-input-number v-model="k.credit" placeholder="下载积分" style="margin-right: 3%"/>
+              :rules="[{ validator: checkCredit }]">
+              所需积分： <a-input-number v-model="k.credit" placeholder="下载积分"/>
             </a-form-model-item>
           </div>
           <div style="margin-bottom: 6px">
@@ -284,9 +291,9 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 import { quillEditor } from 'vue-quill-editor'
-// import { uploadFile } from '@/api/upload'
+// import { uploadImgFile } from '@/api/upload'
 import { getImg } from '@/utils/util'
-import { uploadFile } from '@/api/upload'
+import { uploadImgFile } from '@/api/upload'
 // 工具栏配置
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
@@ -505,12 +512,20 @@ export default {
     })
   },
   methods: {
+    isTrueUrl (rule, value, callback) {
+      const reg = /(https?|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/
+      if (!reg.test(value)) {
+        callback(new Error('请输入正确的链接'))
+      } else {
+        callback()
+      }
+    },
     checkCredit (rule, value, callback) {
       if (value > 0 && value < 21) {
         callback()
         return
       }
-      callback('积分必须在1到20之间!')
+      callback(new Error('积分必须在1到20之间!'))
     },
     setHeaderImg (v, k) {
       this.model.header_img = k
@@ -541,7 +556,7 @@ export default {
       formData.append('file', info.file)
       // 开始上传
       this.upload_loading = true
-      uploadFile(formData).then((res) => {
+      uploadImgFile(formData).then((res) => {
         if (res.code !== 200) {
           that.$message.error(res.message)
           that.upload_loading = false
@@ -584,9 +599,6 @@ export default {
           'credit': ''
         }]
       }
-    },
-    changeContent (val) {
-      this.model.content = val
     },
     addDownload () {
       this.model.download.push({

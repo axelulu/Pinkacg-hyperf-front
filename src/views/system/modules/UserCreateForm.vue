@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建规则"
+    title="用户编辑"
     :width="640"
     :visible="visible"
     :confirmLoading="loading"
@@ -98,15 +98,6 @@
           prop='telephone'
           label="电话">
           <a-input v-model="model.telephone" style="width: 100%" >
-            <a-select
-              slot="addonBefore"
-              v-decorator="['prefix', { initialValue: '86' }]"
-              style="width: 70px"
-            >
-              <a-select-option value="86">
-                +86
-              </a-select-option>
-            </a-select>
           </a-input>
         </a-form-model-item>
         <a-form-model-item
@@ -129,11 +120,6 @@
           <a-input-number v-model="model.answertest"/>
         </a-form-model-item>
         <a-form-model-item
-          prop='ip'
-          label="ip">
-          <a-input v-model="model.ip" />
-        </a-form-model-item>
-        <a-form-model-item
           prop='check'
           label="启用">
           <a-switch v-model="model.check" />
@@ -147,10 +133,10 @@
 import pick from 'lodash.pick'
 import { getRoleList } from '@/api/role'
 import { getImg } from '@/utils/util'
-import { uploadFile } from '@/api/upload'
+import { uploadImgFile } from '@/api/upload'
 
 // 表单字段
-const fields = ['id', 'avatar', 'background', 'name', 'desc', 'username', 'email', 'telephone', 'answertest', 'password', 'ip', 'user_role', 'check', 'updated_at']
+const fields = ['id', 'avatar', 'background', 'name', 'desc', 'username', 'email', 'telephone', 'answertest', 'password', 'user_role', 'check', 'updated_at']
 
 export default {
   props: {
@@ -181,15 +167,38 @@ export default {
     return {
       rules: {
         check: [{ required: true, message: '请输入状态！' }],
-        ip: [{ required: true, message: '请输入ip！' }],
-        answertest: [{ required: true, message: '请输入答题分数！' }],
+        answertest: [
+          { required: true, message: '请输入别名' },
+          { validator: this.changeKey }
+        ],
         user_role: [{ required: true, message: '请输入角色！' }],
-        password: [{ required: true, message: '请输入密码！' }],
-        telephone: [{ required: true, message: '请速入电话！' }],
-        email: [{ required: true, message: '请输入邮箱！' }],
-        desc: [{ required: true, message: '请输入描述！' }],
-        username: [{ required: true, message: '请输入名称！' }],
-        name: [{ required: true, message: '请输入昵称！' }],
+        password: [
+          {
+            required: true,
+            message: '请输入你的密码!'
+          },
+          {
+            validator: this.validateToNextPassword
+          }
+        ],
+        telephone: [
+          { pattern: /^1[3|4|5|7|8][0-9]\d{8}$/, message: '请输入正确的手机号' },
+          { required: true, message: '请速入电话！' }
+        ],
+        email: [
+          {
+            type: 'email',
+            required: true,
+            message: '邮箱格式不正确'
+          },
+          {
+            max: 50,
+            message: '邮箱不得超过50字符'
+          }
+        ],
+        desc: [{ required: true, message: '请输入描述！' }, { min: 10, message: '描述不得小于10字符' }, { max: 50, message: '描述不得超过50字符' }],
+        username: [{ required: true, message: '请输入名称！' }, { min: 4, message: '用户名不得小于4字符' }, { max: 15, message: '用户名不得超过15字符' }],
+        name: [{ required: true, message: '请输入名称！' }, { min: 4, message: '用户名不得小于4字符' }, { max: 15, message: '用户名不得超过15字符' }],
         avatar: [{ required: true, message: '请输入头像！' }],
         background: [{ required: true, message: '请输入背景！' }]
       },
@@ -218,6 +227,14 @@ export default {
     })
   },
   methods: {
+    changeKey (rule, value, callback) {
+      const rgx = /\d+/
+      if (rgx.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入数字'))
+      }
+    },
     getUploadAvatar (info, value) {
       const that = this
       const formData = new FormData()
@@ -228,7 +245,7 @@ export default {
       } else if (value === 'background') {
         this.backgroundUpload_loading = true
       }
-      uploadFile(formData).then((res) => {
+      uploadImgFile(formData).then((res) => {
         if (res.code !== 200) {
           that.$message.error(res.message)
           if (value === 'avatar') {

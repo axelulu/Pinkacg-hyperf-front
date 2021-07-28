@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建规则"
+    title="权限编辑"
     :width="640"
     :visible="visible"
     :confirmLoading="loading"

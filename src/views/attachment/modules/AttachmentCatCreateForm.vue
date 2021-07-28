@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建规则"
+    title="附件分类编辑"
     :width="640"
     :visible="visible"
     :confirmLoading="loading"

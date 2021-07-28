@@ -242,6 +242,12 @@ export default {
             'credit': ''
           }
         ],
+        'music': [],
+        'video': [],
+        'type': 'post',
+        'status': 'publish',
+        'views': 0,
+        'comment_count': 0,
         'download_status': true,
         'comment_status': true
       }
@@ -256,7 +262,6 @@ export default {
       this.confirmLoading = true
       form.setFieldsValue(this.mdl)
       form.validateFields((errors, values) => {
-        console.log(values)
         if (!errors) {
           if (values.id > 0) {
             // 修改 e.g.

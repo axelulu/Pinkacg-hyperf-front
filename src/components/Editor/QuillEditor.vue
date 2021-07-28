@@ -31,7 +31,7 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 import { quillEditor } from 'vue-quill-editor'
-import { uploadFile } from '@/api/upload'
+import { uploadImgFile } from '@/api/upload'
 import { getImg } from '@/utils/util'
 // 工具栏配置
 const toolbarOptions = [
@@ -187,7 +187,7 @@ export default {
       formData.append('file', info.file)
       // 开始上传
       this.upload_loading = true
-      uploadFile(formData).then((res) => {
+      uploadImgFile(formData).then((res) => {
         if (res.code !== 200) {
           that.$message.error(res.message)
           that.upload_loading = false

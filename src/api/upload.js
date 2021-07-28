@@ -3,15 +3,15 @@ import request from '@/utils/request'
 const api = {
   uploadSiteMeta: '/uploadSiteMeta/create',
   uploadPostFile: '/uploadPostFile/create',
-  uploadFile: '/uploadFile/create'
+  uploadImgFile: '/uploadImgFile/create'
 }
 
 export default api
 
-export function uploadFile (parameter) {
+export function uploadImgFile (parameter) {
   console.log(parameter)
   return request({
-    url: api.uploadFile,
+    url: api.uploadImgFile,
     method: 'post',
     data: parameter
   })

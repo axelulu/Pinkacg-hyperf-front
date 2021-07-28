@@ -246,6 +246,7 @@ export default {
     handleOk () {
       const form = this.$refs.createModal.form
       this.confirmLoading = true
+      console.log(this.mdl)
       form.setFieldsValue(this.mdl)
       form.validateFields((errors, values) => {
         console.log(values)
