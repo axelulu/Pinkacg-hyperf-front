@@ -31,11 +31,11 @@
           </span>
           <a-input
             v-decorator="[
-          'label',
-          {
-            rules: [{ required: true, message: '请输入你的分类名称!', whitespace: true }],
-          },
-        ]"
+              'label',
+              {
+                rules: [{ required: true, message: '请输入你的分类名称!', whitespace: true }],
+              },
+            ]"
           />
         </a-form-item>
         <a-form-item label="标识">
@@ -47,11 +47,11 @@
           </span>
           <a-input
             v-decorator="[
-          'value',
-          {
-            rules: [{ required: true, message: '请输入分类标识!', whitespace: true }],
-          },
-        ]"
+              'value',
+              {
+                rules: [{ required: true, message: '请输入分类标识!', whitespace: true }],
+              },
+            ]"
           />
         </a-form-item>
         <a-form-item label="icon">
@@ -63,11 +63,11 @@
           </span>
           <a-input
             v-decorator="[
-          'icon',
-          {
-            rules: [{ required: true, message: '请输入分类icon!', whitespace: true }],
-          },
-        ]"
+              'icon',
+              {
+                rules: [{ required: true, message: '请输入分类icon!', whitespace: true }],
+              },
+            ]"
           />
         </a-form-item>
         <a-form-item label="启用">
