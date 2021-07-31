@@ -72,6 +72,7 @@
           <a-input v-model='model.url'/>
         </a-form-model-item>
         <a-form-model-item
+          v-if='model.is_menu === false'
           prop='method'
           label="方法">
           <a-select
@@ -94,6 +95,7 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
+          v-if='model.is_menu === false'
           prop='path'
           label="后台api地址">
           <span slot="label">
@@ -107,6 +109,7 @@
           />
         </a-form-model-item>
         <a-form-model-item
+          v-if='model.is_menu === false'
           label="不可操作字段">
           <a-select
             mode="tags"

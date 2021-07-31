@@ -20,7 +20,7 @@
             </a-col>
             <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="loadTopMenu()">查询</a-button>
+                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
                 <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? '收起' : '展开' }}
@@ -46,10 +46,10 @@
         </a-dropdown>
       </div>
 
-      <a-table
+      <s-table
         ref="table"
         :columns="columns"
-        :data-source="topMenu"
+        :data="loadData"
         :rowKey="record=>record.id"
         :loading="loading"
         class="components-table-demo-nested">
@@ -66,7 +66,7 @@
             <a @click="handleSub(record)">删除</a>
           </template>
         </span>
-      </a-table>
+      </s-table>
 
       <create-form
         ref="createModal"
@@ -117,7 +117,6 @@ export default {
   data () {
     this.columns = columns
     return {
-      topMenu: [],
       // create model
       visible: false,
       loading: false,
@@ -130,6 +129,18 @@ export default {
         'p_id': 0
       },
       // 加载数据方法 必须为 Promise 对象
+      loadData: parameter => {
+        const that = this
+        const requestParameters = Object.assign({}, parameter, this.queryParam)
+        return getMenuList(requestParameters)
+          .then(res => {
+            if (res.code !== 200) {
+              that.$message.error(res.message)
+              return []
+            }
+            return res.result
+          })
+      },
       selectedRowKeys: [],
       selectedRows: []
     }
@@ -150,23 +161,7 @@ export default {
       }
     }
   },
-  created () {
-    this.loadTopMenu()
-  },
   methods: {
-    async loadTopMenu () {
-      const that = this
-      this.loading = true
-      await getMenuList(this.queryParam)
-        .then(res => {
-          if (res.code !== 200) {
-            that.$message.error(res.message)
-            return []
-          }
-          that.topMenu = res.result.data
-          this.loading = false
-        })
-    },
     handleAdd () {
       this.mdl = {
         'status': true,
@@ -195,7 +190,7 @@ export default {
               // 重置表单数据
               form.resetFields()
               // 刷新表格
-              this.loadTopMenu()
+              this.$refs.table.refresh()
 
               res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
@@ -207,7 +202,7 @@ export default {
               // 重置表单数据
               form.resetFields()
               // 刷新表格
-              this.loadTopMenu()
+              this.$refs.table.refresh()
 
               res.code === 200 ? this.$message.success(res.message) : this.$message.error(res.message)
             })
@@ -236,7 +231,7 @@ export default {
             // 重置表单数据
             form.resetFields()
             // 刷新表格
-            that.loadTopMenu()
+            this.$refs.table.refresh()
             res.code === 200 ? that.$message.success(res.message) : that.$message.error(res.message)
           })
         },

@@ -32,6 +32,26 @@
             />
           </a-form-model-item>
           <a-form-model-item
+            prop='postSrcUrlClass'
+            label="文章内容图片标签"
+            style='width: 45%;display: inline-block'
+            :labelCol="{lg: {span: 11}, sm: {span: 11}}"
+            :wrapperCol="{lg: {span: 13}, sm: {span: 10} }">
+            <a-input
+              placeholder="请输入文章内容图片标签！"
+              v-model='queryPostList.postSrcUrlClass'/>
+          </a-form-model-item>
+          <a-form-model-item
+            prop='siteUrl'
+            label="采集网站链接"
+            style='width: 45%;display: inline-block'
+            :labelCol="{lg: {span: 11}, sm: {span: 11}}"
+            :wrapperCol="{lg: {span: 13}, sm: {span: 10} }">
+            <a-input
+              placeholder="请输入采集网站链接！"
+              v-model='queryPostList.siteUrl'/>
+          </a-form-model-item>
+          <a-form-model-item
             prop='postClass'
             label="文章内容类（最大范围）"
             style='width: 45%;display: inline-block'
@@ -50,6 +70,7 @@
             <a-switch default-checked v-model='queryPostList.tag_status' />
           </a-form-model-item>
           <a-form-model-item
+            v-if='queryPostList.tag_status === true'
             prop='tagClass'
             label="标签内容类（最大范围）"
             style='width: 25%;display: inline-block'
@@ -228,7 +249,7 @@
           >
             <a-button @click='handleSaveSubmit' htmlType="submit" type="primary">保存</a-button>
             <a-button @click='handleSubmit' htmlType="submit" type="primary">采集</a-button>
-          </a-form-model-item>{{queryPostList}}
+          </a-form-model-item>
         </a-form-model>
       </a-spin>
     </a-card>
