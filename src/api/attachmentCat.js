@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  attachmentCatList: '/attachment_cat/index',
-  attachmentCatCreate: '/attachment_cat/create',
-  attachmentCatUpdate: '/attachment_cat/update',
-  attachmentCatDelete: '/attachment_cat/delete'
+  attachmentCatList: '/attachment_cat/attachment_cat_query',
+  attachmentCatCreate: '/attachment_cat/attachment_cat_create',
+  attachmentCatUpdate: '/attachment_cat/attachment_cat_update',
+  attachmentCatDelete: '/attachment_cat/attachment_cat_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createAttachmentCatList (parameter) {
 
 export function updateAttachmentCatList (parameter) {
   return request({
-    url: api.attachmentCatUpdate + '/' + parameter.id,
+    url: api.attachmentCatUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,8 @@ export function updateAttachmentCatList (parameter) {
 
 export function deleteAttachmentCatList (parameter) {
   return request({
-    url: api.attachmentCatDelete + '/' + parameter.id,
-    method: 'delete'
+    url: api.attachmentCatDelete,
+    method: 'delete',
+    data: parameter
   })
 }

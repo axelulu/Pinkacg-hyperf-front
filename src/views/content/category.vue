@@ -236,7 +236,7 @@ export default {
             // 重置表单数据
             form.resetFields()
             // 刷新表格
-            this.$refs.table.refresh()
+            that.$refs.table.refresh()
             res.code === 200 ? that.$message.success(res.message) : that.$message.error(res.message)
           })
         },

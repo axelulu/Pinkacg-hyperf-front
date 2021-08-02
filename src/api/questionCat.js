@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  questionCatList: '/question_cat/index',
-  questionCatCreate: '/question_cat/create',
-  questionCatUpdate: '/question_cat/update',
-  questionCatDelete: '/question_cat/delete'
+  questionCatList: '/question_cat/question_cat_query',
+  questionCatCreate: '/question_cat/question_cat_create',
+  questionCatUpdate: '/question_cat/question_cat_update',
+  questionCatDelete: '/question_cat/question_cat_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createQuestionCatList (parameter) {
 
 export function updateQuestionCatList (parameter) {
   return request({
-    url: api.questionCatUpdate + '/' + parameter.id,
+    url: api.questionCatUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,8 @@ export function updateQuestionCatList (parameter) {
 
 export function deleteQuestionCatList (parameter) {
   return request({
-    url: api.questionCatDelete + '/' + parameter.id,
-    method: 'delete'
+    url: api.questionCatDelete,
+    method: 'delete',
+    data: parameter
   })
 }

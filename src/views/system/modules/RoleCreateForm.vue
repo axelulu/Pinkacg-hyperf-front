@@ -65,7 +65,7 @@
 
 <script>
 import pick from 'lodash.pick'
-import { getMenuList } from '@/api/menu_permission'
+import { getMenuList } from '@/api/permission'
 
 // 表单字段
 const fields = ['id', 'description', 'name', 'rolePermission', 'status', 'updated_at']
@@ -114,7 +114,8 @@ export default {
   methods: {
     async rolePermission () {
       await getMenuList({
-        'p_id': 0
+        'p_id': 0,
+        'pageSize': 1000
       })
         .then(res => {
           this.treeData = res.result.data

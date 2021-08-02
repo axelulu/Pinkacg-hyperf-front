@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  postList: '/post/index',
-  postCreate: '/post/create',
-  postUpdate: '/post/update',
-  postDelete: '/post/delete'
+  postList: '/post/post_query',
+  postCreate: '/post/post_create',
+  postUpdate: '/post/post_update',
+  postDelete: '/post/post_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createPostList (parameter) {
 
 export function updatePostList (parameter) {
   return request({
-    url: api.postUpdate + '/' + parameter.id,
+    url: api.postUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,8 @@ export function updatePostList (parameter) {
 
 export function deletePostList (parameter) {
   return request({
-    url: api.postDelete + '/' + parameter.id,
-    method: 'delete'
+    url: api.postDelete,
+    method: 'delete',
+    data: parameter
   })
 }

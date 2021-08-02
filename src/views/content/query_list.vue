@@ -276,7 +276,7 @@ export default {
       },
       'queryPostList': [],
       getImg,
-      postCategory: {},
+      postCategory: [],
       postTag: {},
       loading: false
     }

@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  categoryList: '/category/index',
-  categoryCreate: '/category/create',
-  categoryUpdate: '/category/update',
-  categoryDelete: '/category/delete'
+  categoryList: '/category/category_query',
+  categoryCreate: '/category/category_create',
+  categoryUpdate: '/category/category_update',
+  categoryDelete: '/category/category_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createCategoryList (parameter) {
 
 export function updateCategoryList (parameter) {
   return request({
-    url: api.categoryUpdate + '/' + parameter.id,
+    url: api.categoryUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,8 @@ export function updateCategoryList (parameter) {
 
 export function deleteCategoryList (parameter) {
   return request({
-    url: api.categoryDelete + '/' + parameter.id,
-    method: 'delete'
+    url: api.categoryDelete,
+    method: 'delete',
+    data: parameter
   })
 }

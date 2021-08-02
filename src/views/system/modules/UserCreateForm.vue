@@ -120,6 +120,11 @@
           <a-input-number v-model="model.answertest"/>
         </a-form-model-item>
         <a-form-model-item
+          prop='credit'
+          label="用户积分">
+          <a-input-number v-model="model.credit"/>
+        </a-form-model-item>
+        <a-form-model-item
           prop='check'
           label="启用">
           <a-switch v-model="model.check" />
@@ -136,7 +141,7 @@ import { getImg } from '@/utils/util'
 import { uploadImgFile } from '@/api/upload'
 
 // 表单字段
-const fields = ['id', 'avatar', 'background', 'name', 'desc', 'username', 'email', 'telephone', 'answertest', 'password', 'user_role', 'check', 'updated_at']
+const fields = ['id', 'avatar', 'background', 'name', 'desc', 'username', 'email', 'telephone', 'answertest', 'credit', 'password', 'user_role', 'check', 'updated_at']
 
 export default {
   props: {

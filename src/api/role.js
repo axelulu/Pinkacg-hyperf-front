@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  roleList: '/role/index',
-  roleCreate: '/role/create',
-  roleUpdate: '/role/update',
-  roleDelete: '/role/delete'
+  roleList: '/role/role_query',
+  roleCreate: '/role/role_create',
+  roleUpdate: '/role/role_update',
+  roleDelete: '/role/role_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createRoleList (parameter) {
 
 export function updateRoleList (parameter) {
   return request({
-    url: api.roleUpdate + '/' + parameter.id,
+    url: api.roleUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,8 @@ export function updateRoleList (parameter) {
 
 export function deleteRoleList (parameter) {
   return request({
-    url: api.roleDelete + '/' + parameter.id,
-    method: 'delete'
+    url: api.roleDelete,
+    method: 'delete',
+    data: parameter
   })
 }

@@ -61,15 +61,16 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
-          prop='url'
+          v-if='model.is_menu === true'
+          prop='path'
           label="前台mod地址">
           <span slot="label">
-            url&nbsp;
+            path&nbsp;
             <a-tooltip title="这里输入权限链接！">
               <a-icon type="question-circle-o" />
             </a-tooltip>
           </span>
-          <a-input v-model='model.url'/>
+          <a-input v-model='model.path'/>
         </a-form-model-item>
         <a-form-model-item
           v-if='model.is_menu === false'
@@ -96,16 +97,16 @@
         </a-form-model-item>
         <a-form-model-item
           v-if='model.is_menu === false'
-          prop='path'
+          prop='url'
           label="后台api地址">
           <span slot="label">
-            path&nbsp;
+            url&nbsp;
             <a-tooltip title="这里输入权限路径！">
               <a-icon type="question-circle-o" />
             </a-tooltip>
           </span>
           <a-input
-            v-model='model.path'
+            v-model='model.url'
           />
         </a-form-model-item>
         <a-form-model-item
@@ -157,7 +158,7 @@
 
 <script>
 import pick from 'lodash.pick'
-import { getMenuList } from '@/api/menu_permission'
+import { getMenuList } from '@/api/permission'
 import { getColumnList } from '@/api/setting'
 
 // 表单字段
@@ -303,6 +304,7 @@ export default {
   methods: {
     getMenuPermissionList () {
       getMenuList({
+        'pageSize': 1000,
         'p_id': 0
       }).then(res => {
         this.topMenu = res.result.data

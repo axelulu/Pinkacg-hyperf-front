@@ -127,6 +127,11 @@ const columns = [
     scopedSlots: { customRender: 'avatar' }
   },
   {
+    title: '积分',
+    dataIndex: 'credit',
+    scopedSlots: { customRender: 'credit' }
+  },
+  {
     title: '用户名',
     dataIndex: 'username',
     scopedSlots: { customRender: 'username' }

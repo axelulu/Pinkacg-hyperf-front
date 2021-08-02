@@ -5,20 +5,20 @@
       <a-form-model
         :model="cms"
         :rules="rules"
-        ref='cmsForm'>
+        ref="cmsForm">
         <a-form-model-item
           label="cms布局"
           :labelCol="{lg: {span: 4}, sm: {span: 4}}"
           :wrapperCol="{lg: {span: 14}, sm: {span: 17} }">
-          <a-form style='display: inline-block' v-for="(k, v) in cms" :key="v">
+          <a-form-model-item style="display: inline-block" v-for="(k, v) in cms" :key="v">
             <a-form-model-item style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
-              <a-input prop='name' v-model="k.name" addon-before="cms名称" placeholder="请输入cms名称！" />
+              <a-input prop="name" v-model="k.name" addon-before="cms名称" placeholder="请输入cms名称！" />
             </a-form-model-item>
             <a-form-model-item style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
-              <a-input prop='icon' v-model="k.icon" addon-before="图标" placeholder="请输入cms图标！" />
+              <a-input prop="icon" v-model="k.icon" addon-before="图标" placeholder="请输入cms图标！" />
             </a-form-model-item>
             <a-form-model-item style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
-              <a-select prop='menu' v-model="k.menu" style="width: 200px">
+              <a-select prop="menu" v-model="k.menu" style="width: 200px">
                 <a-select-option v-for="k in postCategory" :key="k.id" :value="k.value">
                   <span v-if="k.son === 0">{{ k.label }}</span>
                   <span v-else>{{ k.label }}</span>
@@ -26,7 +26,7 @@
               </a-select>
             </a-form-model-item>
             <a-form-model-item style="margin-bottom: 15px;float: left;width: 23%;margin: 0 1%">
-              <a-select prop='style' v-model="k.style" style="width: 200px">
+              <a-select prop="style" v-model="k.style" style="width: 200px">
                 <a-select-option :value="1">
                   样式一
                 </a-select-option>
@@ -38,15 +38,15 @@
                 </a-select-option>
               </a-select>
             </a-form-model-item>
-          </a-form>
+          </a-form-model-item>
           <div style="margin-bottom: 6px">
             <a-button @click="addDownload" style="width: 48%;margin-right: 2%" type="primary" block>
-            添加
+              添加
             </a-button>
             <a-button @click="deleteDownload" style="width: 48%;margin-left: 2%" type="danger" block>
-            删除
+              删除
             </a-button>
-        </div>
+          </div>
         </a-form-model-item>
         <a-form-model-item
           :wrapperCol="{ span: 24 }"
@@ -65,7 +65,7 @@ import { getSettingList, updateSettingList } from '@/api/setting'
 import { getCategoryList } from '@/api/category'
 
 export default {
-  name: 'index',
+  name: 'Index',
   data () {
     return {
       rules: {

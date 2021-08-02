@@ -1,59 +1,42 @@
 import request from '@/utils/request'
 
 const api = {
-  permissionList: '/permission/index',
-  permissionCreate: '/permission/create',
-  permissionUpdate: '/permission/update',
-  permissionDelete: '/permission/delete',
-  rolePermissionCreate: '/permission/createByRole',
-  rolePermissionUpdate: '/permission/updateByRole'
+  MenuPermissionList: '/permission/permission_query',
+  MenuPermissionCreate: '/permission/permission_create',
+  MenuPermissionUpdate: '/permission/permission_update',
+  MenuPermissionDelete: '/permission/permission_delete'
 }
 
 export default api
 
-export function getPermissionList (parameter) {
+export function getMenuList (parameter) {
   return request({
-    url: api.permissionList,
+    url: api.MenuPermissionList,
     method: 'get',
     params: parameter
   })
 }
 
-export function createPermissionList (parameter) {
+export function createMenuList (parameter) {
   return request({
-    url: api.permissionCreate,
+    url: api.MenuPermissionCreate,
     method: 'post',
     data: parameter
   })
 }
 
-export function updatePermissionList (parameter) {
+export function updateMenuList (parameter) {
   return request({
-    url: api.permissionUpdate + '/' + parameter.id,
+    url: api.MenuPermissionUpdate,
     method: 'put',
     data: parameter
   })
 }
 
-export function deletePermissionList (parameter) {
+export function deleteMenuList (parameter) {
   return request({
-    url: api.permissionDelete + '/' + parameter.id,
-    method: 'delete'
-  })
-}
-
-export function createRolePermission (parameter) {
-  return request({
-    url: api.rolePermissionCreate,
-    method: 'post',
-    data: parameter
-  })
-}
-
-export function updateRolePermission (parameter) {
-  return request({
-    url: api.rolePermissionUpdate + '/' + parameter.id,
-    method: 'put',
+    url: api.MenuPermissionDelete,
+    method: 'delete',
     data: parameter
   })
 }

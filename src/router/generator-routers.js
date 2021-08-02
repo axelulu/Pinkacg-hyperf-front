@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import * as loginService from '@/api/login'
+import * as loginService from '@/api/user'
 // eslint-disable-next-line
 import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
 
@@ -23,7 +23,7 @@ const constantRouterComponents = {
   'Footer': () => import('@/views/site/footer'),
 
   // system
-  'Menu': () => import('@/views/system/menu_permission'),
+  'Menu': () => import('@/views/system/permission'),
   'Role': () => import('@/views/system/role'),
   'User': () => import('@/views/system/user'),
 

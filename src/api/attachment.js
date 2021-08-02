@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  attachmentList: '/attachment/index',
-  attachmentCreate: '/attachment/create',
-  attachmentUpdate: '/attachment/update',
-  attachmentDelete: '/attachment/delete'
+  attachmentList: '/attachment/attachment_query',
+  attachmentCreate: '/attachment/attachment_create',
+  attachmentUpdate: '/attachment/attachment_update',
+  attachmentDelete: '/attachment/attachment_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createAttachmentList (parameter) {
 
 export function updateAttachmentList (parameter) {
   return request({
-    url: api.attachmentUpdate + '/' + parameter.id,
+    url: api.attachmentUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,7 @@ export function updateAttachmentList (parameter) {
 
 export function deleteAttachmentList (parameter) {
   return request({
-    url: api.attachmentDelete + '/' + parameter.id,
+    url: api.attachmentDelete,
     method: 'delete',
     data: parameter
   })

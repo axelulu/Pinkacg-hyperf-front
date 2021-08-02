@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  tagList: '/tag/index',
-  tagCreate: '/tag/create',
-  tagUpdate: '/tag/update',
-  tagDelete: '/tag/delete'
+  tagList: '/tag/tag_query',
+  tagCreate: '/tag/tag_create',
+  tagUpdate: '/tag/tag_update',
+  tagDelete: '/tag/tag_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createTagList (parameter) {
 
 export function updateTagList (parameter) {
   return request({
-    url: api.tagUpdate + '/' + parameter.id,
+    url: api.tagUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,8 @@ export function updateTagList (parameter) {
 
 export function deleteTagList (parameter) {
   return request({
-    url: api.tagDelete + '/' + parameter.id,
-    method: 'delete'
+    url: api.tagDelete,
+    method: 'delete',
+    data: parameter
   })
 }

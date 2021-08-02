@@ -82,14 +82,14 @@
 
 <script>
 import { STable } from '@/components'
-import { getMenuList, createMenuList, updateMenuList, deleteMenuList } from '@/api/menu_permission'
+import { getMenuList, createMenuList, updateMenuList, deleteMenuList } from '@/api/permission'
 
-import CreateForm from './modules/MenuCreateForm'
+import CreateForm from './modules/PermissionCreateForm'
 
 const columns = [
   { title: 'id', dataIndex: 'id', key: 'id', scopedSlots: { customRender: 'id' } },
   { title: '标题', dataIndex: 'title', key: 'title' },
-  { title: '链接', dataIndex: 'url', key: 'url' },
+  { title: '标识', dataIndex: 'name', key: 'name' },
   { title: '路径', dataIndex: 'path', key: 'path' },
   { title: '方法', dataIndex: 'method', key: 'method', scopedSlots: { customRender: 'method' } },
   { title: '状态', dataIndex: 'status', key: 'status', scopedSlots: { customRender: 'status' } },
@@ -231,7 +231,7 @@ export default {
             // 重置表单数据
             form.resetFields()
             // 刷新表格
-            this.$refs.table.refresh()
+            that.$refs.table.refresh()
             res.code === 200 ? that.$message.success(res.message) : that.$message.error(res.message)
           })
         },

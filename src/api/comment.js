@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  commentList: '/comment/index',
-  commentCreate: '/comment/create',
-  commentUpdate: '/comment/update',
-  commentDelete: '/comment/delete'
+  commentList: '/comment/comment_query',
+  commentCreate: '/comment/comment_create',
+  commentUpdate: '/comment/comment_update',
+  commentDelete: '/comment/comment_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createCommentList (parameter) {
 
 export function updateCommentList (parameter) {
   return request({
-    url: api.commentUpdate + '/' + parameter.id,
+    url: api.commentUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,8 @@ export function updateCommentList (parameter) {
 
 export function deleteCommentList (parameter) {
   return request({
-    url: api.commentDelete + '/' + parameter.id,
-    method: 'delete'
+    url: api.commentDelete,
+    method: 'delete',
+    data: parameter
   })
 }

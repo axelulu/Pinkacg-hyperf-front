@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  orderList: '/order/index',
-  orderCreate: '/order/create',
-  orderUpdate: '/order/update',
-  orderDelete: '/order/delete'
+  orderList: '/order/order_query',
+  orderCreate: '/order/order_create',
+  orderUpdate: '/order/order_update',
+  orderDelete: '/order/order_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createOrderList (parameter) {
 
 export function updateOrderList (parameter) {
   return request({
-    url: api.orderUpdate + '/' + parameter.id,
+    url: api.orderUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,8 @@ export function updateOrderList (parameter) {
 
 export function deleteOrderList (parameter) {
   return request({
-    url: api.orderDelete + '/' + parameter.id,
-    method: 'delete'
+    url: api.orderDelete,
+    method: 'delete',
+    data: parameter
   })
 }

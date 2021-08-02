@@ -39,9 +39,9 @@ export const asyncRouterMap = [
         meta: { title: 'menu.system', icon: 'form', permission: [2, 3, 4, 26] },
         children: [
           {
-            path: '/system/menuPermission',
+            path: '/system/permission',
             name: 'Menu',
-            component: () => import('@/views/system/menu_permission'),
+            component: () => import('@/views/system/permission'),
             meta: { title: 'menu.system.menu', keepAlive: true, permission: [26] }
           },
           {

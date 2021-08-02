@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
 const api = {
-  questionList: '/question/index',
-  questionCreate: '/question/create',
-  questionUpdate: '/question/update',
-  questionDelete: '/question/delete'
+  questionList: '/question/question_query',
+  questionCreate: '/question/question_create',
+  questionUpdate: '/question/question_update',
+  questionDelete: '/question/question_delete'
 }
 
 export default api
@@ -27,7 +27,7 @@ export function createQuestionList (parameter) {
 
 export function updateQuestionList (parameter) {
   return request({
-    url: api.questionUpdate + '/' + parameter.id,
+    url: api.questionUpdate,
     method: 'put',
     data: parameter
   })
@@ -35,7 +35,8 @@ export function updateQuestionList (parameter) {
 
 export function deleteQuestionList (parameter) {
   return request({
-    url: api.questionDelete + '/' + parameter.id,
-    method: 'delete'
+    url: api.questionDelete,
+    method: 'delete',
+    data: parameter
   })
 }

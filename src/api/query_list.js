@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 const api = {
-  queryPostList: '/query_list/index'
+  queryPostList: '/query_list/query_list_query'
 }
 
 export default api

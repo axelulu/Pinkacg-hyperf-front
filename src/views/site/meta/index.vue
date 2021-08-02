@@ -72,6 +72,46 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item
+          label="用户注册默认头像"
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">
+          <a-upload
+            list-type="picture-card"
+            class="avatar-uploader"
+            :show-upload-list="false"
+            :before-upload="beforeUpload"
+            :customRequest="value => getUploadSiteMeta(value, 'default_avatar')"
+          >
+            <img style='height: 150px' prop='logo' v-if="site_meta.default_avatar" :src="getImg(site_meta.default_avatar)" alt="avatar" />
+            <div v-else>
+              <a-icon :type="upload_loading ? 'loading' : 'plus'" />
+              <div class="ant-upload-text">
+                Upload
+              </div>
+            </div>
+          </a-upload>
+        </a-form-model-item>
+        <a-form-model-item
+          label="用户注册默认背景"
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">
+          <a-upload
+            list-type="picture-card"
+            class="avatar-uploader"
+            :show-upload-list="false"
+            :before-upload="beforeUpload"
+            :customRequest="value => getUploadSiteMeta(value, 'default_background')"
+          >
+            <img style='height: 150px' prop='logo' v-if="site_meta.default_background" :src="getImg(site_meta.default_background)" alt="avatar" />
+            <div v-else>
+              <a-icon :type="upload_loading ? 'loading' : 'plus'" />
+              <div class="ant-upload-text">
+                Upload
+              </div>
+            </div>
+          </a-upload>
+        </a-form-model-item>
+        <a-form-model-item
           label="网站logo"
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
           :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">
@@ -139,6 +179,16 @@
             rows="4"
             placeholder="请输入网站关键词！"
             v-model='site_meta.seo_keywords'/>
+        </a-form-model-item>
+        <a-form-model-item
+          prop='head_notice'
+          label="网站首页公告"
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">
+          <a-textarea
+            rows="4"
+            placeholder="请输入网站首页公告！"
+            v-model='site_meta.head_notice'/>
         </a-form-model-item>
         <a-form-model-item
           :wrapperCol="{ span: 24 }"
