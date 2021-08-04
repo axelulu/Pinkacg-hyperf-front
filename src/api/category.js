@@ -2,6 +2,7 @@ import request from '@/utils/request'
 
 const api = {
   categoryList: '/category/category_query',
+  categoryListTree: '/category/category_query_tree',
   categoryCreate: '/category/category_create',
   categoryUpdate: '/category/category_update',
   categoryDelete: '/category/category_delete'
